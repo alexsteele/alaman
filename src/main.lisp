@@ -1,5 +1,11 @@
 (defpackage alaman
-  (:use :cl))
+  (:use :cl)
+  (:import-from #:alaman.core
+		#:alaman.admin
+		#:alaman.agent))
 (in-package :alaman)
 
-;; blah blah blah.
+(print "hello world")
+(print (admin-init))
+(print (alaman.core::make-agent))
+(print (alaman.core::make-universe))

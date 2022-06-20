@@ -7,7 +7,8 @@
                 :components
                 ((:file "main"))))
   :description ""
-  :in-order-to ((test-op (test-op "alaman/tests"))))
+  :in-order-to ((test-op (test-op "alaman/tests")))
+  :entry-point "alaman:main")
 
 (defsystem "alaman/tests"
   :author ""
