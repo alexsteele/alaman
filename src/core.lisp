@@ -1,5 +1,6 @@
 (defpackage alaman.core
   (:use #:cl)
+  (:nicknames "core")
   (:export #:agent
 	   #:device
 	   #:command
