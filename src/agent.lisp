@@ -99,8 +99,6 @@
 (defvar *agent* (new-agent :info (alaman.core:make-agent)
 			   :ns *ns*
 			   :clock (new-clock)))
-(print (clock *agent*))
-(clock-time (clock *agent*))
 (start *agent*)
 (set-state *agent* :active)
 (print (info *agent*))

@@ -5,7 +5,8 @@
   (:export #:init
 	   #:register
 	   #:lookup
-	   #:connect))
+	   #:connect
+	   #:children))
 
 (in-package :alaman.ns)
 
@@ -19,3 +20,12 @@
 
 (defun lookup (ns name)
   (second (gethash name ns '(nil nil))))
+
+;;; TODO: Add prefix filter
+(defun children (ns name)
+  "Returns a list of '(<name> <obj> <data>)"
+  (let* ((entries nil))
+    (maphash #'(lambda (name entry) (push (append (list name) entry) entries))
+	     ns)
+    entries))
+

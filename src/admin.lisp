@@ -1,26 +1,45 @@
 (defpackage alaman.admin
   (:use #:cl)
-  (:import-from #:alaman.core))
+  (:import-from #:alaman.core)
+  (:import-from #:alaman.ns)
+  (:local-nicknames (:core :alaman.core)
+		    (:ns :alaman.ns))
+  (:export #:new-admin
+	   #:start
+	   #:stop))
 
 (in-package :alaman.admin)
 
 (defstruct admin
-  (root "/tmp/alaman")
+  (root "")
   (universe nil)
+  (nameserv nil)
+  (clock nil)
   (agents (make-hash-table :test #'equal))
   (devices (make-hash-table :test #'equal))
   (command-queue nil)
   (events nil))
 
-(defvar *admin* nil)
+(defun new-admin (&key root universe ns clock)
+  (make-admin :root root :universe universe :nameserv ns :clock clock))
 
-(defun admin-init (&key (universe nil) (root nil))
-  nil)
+(defun start (admin)
+  (register admin)
+  (fetch-agents admin))
 
-(defun admin-start ()
-  nil)
+(defun register (admin)
+  (ns:register (admin-nameserv admin) "/admin" admin ""))
 
-(defun admin-stop ()
+(defun fetch-agents (admin)
+  (let ((entries (ns:children (admin-nameserv admin) "/agent")))
+    (dolist (entry entries)
+      (print entry)
+      (let* ((info (nth 2 entry))
+	     (id (core:agent-id info))
+	     (agents (admin-agents admin))))
+      (setf (gethash id agents) info))))
+
+(defun stop ()
   nil)
 
 (defun register-agent (info)
@@ -46,3 +65,13 @@
 
 (defun agent-log-events (agent-id events)
   nil)
+
+(defvar *ns* (ns:init))
+(defvar *admin*
+  (new-admin :root "/tmp/alaman"
+	     :universe (core:make-universe)
+	     :ns *ns*
+	     :clock nil))
+
+(ns:register *ns* "/agent/boo" nil (core:make-agent))
+(start *admin*)
