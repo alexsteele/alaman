@@ -8,6 +8,7 @@
   (:export #:new-agent
 	   #:start
 	   #:stop
+	   #:submit-command
 	   #:agent-step))
 
 (in-package :alaman.agent)
@@ -16,6 +17,11 @@
   (format t "agent ~a: ~a"
 	  (core:agent-name (info agent))
 	  (apply #'format nil args)))
+
+;; TODO: implement mockable clock
+(defun new-clock () nil)
+(defun clock-time (clock)
+  (get-universal-time))
 
 (defclass agent ()
   ((info
@@ -26,16 +32,23 @@
    (ns
     :initarg :ns
     :accessor nameserv)
+   (clock
+    :initarg :clock
+    :accessor clock)
    (commands
     :initform nil
-    :accessor commands)))
+    :accessor commands)
+   (sleep-until
+    :initform nil
+    :accessor sleep-until)))
 
-(defun new-agent (&key info root ns)
+(defun new-agent (&key info root ns clock)
   "Create a new agent. info: core:agent"
   (make-instance 'agent
 		 :info info
 		 :root root
-		 :ns ns))
+		 :ns ns
+		 :clock clock))
 
 (defmethod register (agent)
   (dbg agent "registering ~a" (core:agent-name (info agent)))
@@ -58,8 +71,9 @@
 ;;; TODO: rename. avoid collision with cl:step
 (defmethod step-agent (agent)
   (case (core:agent-state (info agent))
-	(:active (step-active agent))
-	(t (error "unrecognized state"))))
+    (:active (step-active agent))
+    (:sleeping (step-sleeping agent))
+    (t (error "unrecognized state"))))
 
 (defmethod step-active (agent)
   (exec-commands agent))
@@ -67,8 +81,30 @@
 (defmethod exec-commands (agent)
   (printf (commands agent)))
 
+(defmethod step-sleeping (agent)
+  (let ((ts (clock-time (clock agent))))
+    (when (> ts (sleep-until agent))
+      (wakeup agent))))
+
+(defmethod wakeup (agent)
+  (dbg agent "waking up")
+  (set-state agent :active)
+  (setf (sleep-until agent) nil))
+
+(defmethod submit-command (agent command)
+  (push command (commands agent)))
+
+
 (defvar *ns* (ns:init))
-(defvar *agent* (new-agent :info (alaman.core:make-agent) :ns *ns*))
+(defvar *agent* (new-agent :info (alaman.core:make-agent)
+			   :ns *ns*
+			   :clock (new-clock)))
+(print (clock *agent*))
+(clock-time (clock *agent*))
 (start *agent*)
 (set-state *agent* :active)
 (print (info *agent*))
+(submit-command *agent* "sleep")
+(set-state *agent* :sleeping)
+(setf (sleep-until *agent*) 0)
+(step-agent *agent*)
