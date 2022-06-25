@@ -1,3 +1,4 @@
+;; Core types
 (defpackage alaman.core
   (:use #:cl)
   (:nicknames "core")

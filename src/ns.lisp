@@ -1,4 +1,4 @@
-;; Name service
+;; The name service allows agents to register their info for the admin
 (defpackage alaman.ns
   (:use #:cl)
   (:import-from :alexandria :starts-with-subseq)
@@ -45,7 +45,7 @@
 		 (starts-with-subseq name (entry-name entry)))
 	     (entries ns)))
 
-(starts-with-subseq "/dne" "/foo")
+;; TODO: Move to tests once asdf works...
 (defun test-ns ()
   (let ((serv (init)))
     (register serv "/foo" "a" "b")

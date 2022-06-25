@@ -1,5 +1,6 @@
 (require :asdf)
 
+;; TODO: Get defsystem working on mac.
 (asdf:defsystem "alaman"
   :version "0.1.0"
   :author "Alex Steele"

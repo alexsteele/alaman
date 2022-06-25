@@ -1,3 +1,4 @@
+;; The admin provides admin actions and manages agents
 (defpackage alaman.admin
   (:use #:cl)
   (:import-from #:alaman.core)

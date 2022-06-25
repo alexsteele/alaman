@@ -1,3 +1,4 @@
+;; Agents act in the universe based on the admin's commands
 (defpackage alaman.agent
   (:use #:cl)
   (:import-from :alaman.ns)
