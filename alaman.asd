@@ -1,6 +1,5 @@
 (require :asdf)
 
-;; TODO: Get defsystem working on mac.
 (asdf:defsystem "alaman"
   :version "0.1.0"
   :author "Alex Steele"
@@ -13,7 +12,7 @@
 		 (:file "ns")
 		 (:file "agent")
 		 (:file "admin"))))
-  :description ""
+  :description "agent simulation"
   :in-order-to ((test-op (test-op "alaman/tests")))
   :entry-point "alaman:main")
 

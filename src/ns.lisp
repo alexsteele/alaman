@@ -7,7 +7,11 @@
 	   #:register
 	   #:lookup
 	   #:connect
-	   #:children))
+	   #:children
+	   #:entry
+	   #:make-entry
+	   #:entry-name
+	   #:entry-data))
 
 (in-package :alaman.ns)
 
@@ -44,14 +48,3 @@
 		 (print (starts-with-subseq name (entry-name entry)))
 		 (starts-with-subseq name (entry-name entry)))
 	     (entries ns)))
-
-;; TODO: Move to tests once asdf works...
-(defun test-ns ()
-  (let ((serv (init)))
-    (register serv "/foo" "a" "b")
-    (assert (equal "b" (lookup serv "/foo")))
-    (assert (equal  "a" (connect serv "/foo")))
-    (assert (equal nil (children serv "/dne")))
-    (assert (equal (list (make-entry :name "/foo" :obj "a" :data "b"))
-		   (children serv "/")))))
-(test-ns)
