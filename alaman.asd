@@ -4,7 +4,7 @@
 (asdf:defsystem "alaman"
   :version "0.1.0"
   :author "Alex Steele"
-  :license ""
+  :license "MIT"
   :depends-on (:alexandria)
   :components ((:module "src"
                 :components
