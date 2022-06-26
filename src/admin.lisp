@@ -1,4 +1,3 @@
-;; The admin provides admin actions and manages agents
 (defpackage alaman.admin
   (:use #:cl)
   (:import-from #:alaman.core)
@@ -12,6 +11,7 @@
 (in-package :alaman.admin)
 
 (defstruct admin
+  "Manages agents and provides admin functionality."
   (root "")
   (universe nil)
   (nameserv nil)
@@ -67,12 +67,3 @@
 (defun agent-log-events (agent-id events)
   nil)
 
-(defvar *ns* (ns:init))
-(defvar *admin*
-  (new-admin :root "/tmp/alaman"
-	     :universe (core:make-universe)
-	     :ns *ns*
-	     :clock nil))
-
-(ns:register *ns* "/agent/boo" nil (core:make-agent))
-(start *admin*)

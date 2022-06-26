@@ -20,7 +20,8 @@
   :author ""
   :license ""
   :depends-on ("alaman"
-               "rove")
+               "rove"
+	       "fiveam")
   :components ((:module "tests"
                 :components
                 ((:file "main")

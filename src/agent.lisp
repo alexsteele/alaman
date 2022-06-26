@@ -78,7 +78,7 @@
   (printf (commands agent)))
 
 (defmethod step-sleeping (agent)
-  (let ((ts (clock-time (clock agent))))
+  (let ((ts (core:clock-time (clock agent))))
     (when (> ts (sleep-until agent))
       (wakeup agent))))
 
@@ -89,16 +89,3 @@
 
 (defmethod submit-command (agent command)
   (push command (commands agent)))
-
-
-(defvar *ns* (ns:init))
-(defvar *agent* (new-agent :info (alaman.core:make-agent)
-			   :ns *ns*
-			   :clock (core:new-system-clock)))
-(start *agent*)
-(set-state *agent* :active)
-(print (info *agent*))
-(submit-command *agent* "sleep")
-(set-state *agent* :sleeping)
-(setf (sleep-until *agent*) 0)
-(step-agent *agent*)
