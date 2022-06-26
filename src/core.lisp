@@ -7,7 +7,9 @@
 	   #:command
 	   #:event
 	   #:feature
-	   #:universe))
+	   #:universe
+	   #:new-system-clock
+	   #:clock-time))
 (in-package :alaman.core)
 
 (defstruct agent
@@ -49,14 +51,15 @@ to agents."
   (result nil))
 
 (defstruct event
+  "An event recorded by an agent."
   (id "")
   (kind nil)
   (tags nil)
   (vars nil)
   (timestamp nil))
 
-(defstruct feature
-  "A feature is an inanimate entity in the universe."
+(defstruct object
+  "An object in the universe."
   (id "")
   (name "")
   (kind nil)
@@ -70,6 +73,11 @@ to agents."
   "A map of the universe."
   (dims '(1000 1000))
   (entities nil))
+
+;; TODO: Support different implementations
+(defun new-system-clock () nil)
+(defun clock-time (clock)
+  (get-universal-time))
 
 ;;; TODO: Limit exports?
 (defun export-all (pkg)

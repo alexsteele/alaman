@@ -19,11 +19,6 @@
 	  (core:agent-name (info agent))
 	  (apply #'format nil args)))
 
-;; TODO: implement mockable clock
-(defun new-clock () nil)
-(defun clock-time (clock)
-  (get-universal-time))
-
 (defclass agent ()
   ((info
     :initarg :info
@@ -99,7 +94,7 @@
 (defvar *ns* (ns:init))
 (defvar *agent* (new-agent :info (alaman.core:make-agent)
 			   :ns *ns*
-			   :clock (new-clock)))
+			   :clock (core:new-system-clock)))
 (start *agent*)
 (set-state *agent* :active)
 (print (info *agent*))
