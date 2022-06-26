@@ -1,7 +1,8 @@
 ;; The name service allows agents to register their info for the admin
 (defpackage alaman.ns
   (:use #:cl)
-  (:import-from :alexandria :starts-with-subseq)
+  (:import-from :alexandria :hash-table-values)
+  (:import-from :uiop :string-prefix-p)
   (:nicknames "ns")
   (:export #:init
 	   #:register
@@ -16,35 +17,28 @@
 (in-package :alaman.ns)
 
 (defstruct entry
-  (name "")
+  (name nil)
   (obj nil)
   (data nil))
 
 (defun init () (make-hash-table :test #'equal))
 
 (defun register (ns name obj &optional data)
-  (setf (gethash name ns) (list obj data)))
+  (setf (gethash name ns) (make-entry :name name :obj obj :data data)))
 
 (defun connect (ns name)
-  (first (gethash name ns '(nil nil))))
+  (entry-obj (gethash name ns (make-entry))))
 
 (defun lookup (ns name)
-  (second (gethash name ns '(nil nil))))
+  (entry-data (gethash name ns (make-entry))))
 
-;;; TODO: There must be a better way to do this...
 (defun entries (ns)
-  (let ((result nil))
-    (maphash #'(lambda (name obj-data)
-		 (push (make-entry :name name
-				   :obj (first obj-data)
-				   :data (second obj-data))
-		       result))
-	     ns)
-    result))
+  (hash-table-values ns))
+
+(defun entry-is-child (name)
+  (lambda (entry)
+    (string-prefix-p name (entry-name entry))))
 
 (defun children (ns name)
   "Returns a list of ns:entry"
-  (remove-if #'(lambda (entry)
-		 (print (starts-with-subseq name (entry-name entry)))
-		 (starts-with-subseq name (entry-name entry)))
-	     (entries ns)))
+  (remove-if-not (entry-is-child name) (entries ns)))
