@@ -22,6 +22,7 @@
 (defun run (sim) nil)
 (defun dostep (sim) nil)
 (defun stop (sim) nil)
+(defun spawn-agent (sim &optional agent) "Spawn an agent" nil)
 (defun submit (command) nil)
 (defun exec (command) nil)
 (defun pprint (sim) nil)
