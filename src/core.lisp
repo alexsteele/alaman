@@ -7,6 +7,7 @@
 	   #:command
 	   #:device-info
 	   #:event
+	   #:new-id
 	   #:new-system-clock
 	   #:object
 	   #:spec
@@ -89,6 +90,19 @@
   (tags nil)
   (vars nil)
   (timestamp nil))
+
+(defvar *charset* "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+
+(defun rand-select (seq)
+  (elt seq (random (length seq))))
+
+(defun rand-string (length)
+  (map 'string
+       #'(lambda (_) (rand-select *charset*))
+       (make-string length)))
+
+;; TODO: Use UUID
+(defun new-id () (rand-string 16))
 
 ;; TODO: Support different implementations
 (defun new-system-clock () nil)
