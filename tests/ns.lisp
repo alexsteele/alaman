@@ -13,7 +13,11 @@
 (defvar *ns* (ns:init))
 
 (test ns-basics
+  (is (not (ns:existsp *ns* "/dne")))
+
   (ns:register *ns* "/foo" "a" "b")
+
+  (is (ns:existsp *ns* "/foo"))
   (is (equal "b" (ns:lookup *ns* "/foo")))
   (is (equal "a" (ns:connect *ns* "/foo")))
   (is (equal nil (ns:children *ns* "/dne")))
@@ -21,3 +25,4 @@
 	      (ns:children *ns* "/"))))
 
 ; (run! 'ns-tests)
+

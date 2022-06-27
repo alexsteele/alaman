@@ -6,6 +6,7 @@
   (:nicknames "ns")
   (:export #:init
 	   #:register
+	   #:existsp
 	   #:lookup
 	   #:connect
 	   #:children
@@ -28,6 +29,9 @@
 
 (defun connect (ns name)
   (entry-obj (gethash name ns (make-entry))))
+
+(defun existsp (ns name)
+  (if (gethash name ns) t nil))
 
 (defun lookup (ns name)
   (entry-data (gethash name ns (make-entry))))
