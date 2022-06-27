@@ -17,7 +17,7 @@
 (defvar *ns* (ns:init))
 (defvar *clock* (new-system-clock))
 (defvar *admin* (admin:init
-		 :root "/tmp/admin"
+		 :folder "/tmp/admin"
 		 :ns *ns*
 		 :clock *clock*))
 
@@ -30,4 +30,3 @@
   (is (equalp (admin:list-agents *admin*) (list (make-agent-info :id "0")))))
 
 ; (run! 'admin-tests)
-

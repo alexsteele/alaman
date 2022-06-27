@@ -14,7 +14,7 @@
 
 (defstruct admin
   "Manages agents and provides admin functionality."
-  (root "")
+  (folder "")
   (ns nil)
   (clock nil)
   (agents (make-hash-table :test #'equal))
@@ -25,8 +25,8 @@
 (defun dbg (admin &rest args)
   (format t "admin: ~a~%" (apply #'format nil args)))
 
-(defun init (&key root ns clock)
-  (make-admin :root root :ns ns :clock clock))
+(defun init (&key folder ns clock)
+  (make-admin :folder folder :ns ns :clock clock))
 
 (defun start (admin)
   (dbg admin "start")
