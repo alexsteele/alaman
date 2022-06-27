@@ -1,6 +1,5 @@
-;; Agents act in the universe based on the admin's commands
 (defpackage alaman.agent
-  (:use #:cl)
+  (:use #:cl #:alaman.core)
   (:import-from :alaman.ns)
   (:import-from :alaman.core)
   (:local-nicknames
@@ -14,17 +13,10 @@
 
 (in-package :alaman.agent)
 
-(defun dbg (agent &rest args)
-  (format t "agent ~a: ~a"
-	  (core:agent-name (info agent))
-	  (apply #'format nil args)))
-
 (defclass agent ()
   ((info
     :initarg :info
     :accessor info)
-   (root
-    :initarg :root)
    (ns
     :initarg :ns
     :accessor nameserv)
@@ -38,24 +30,33 @@
     :initform nil
     :accessor sleep-until)))
 
-(defun new-agent (&key info root ns clock)
-  "Create a new agent. info: core:agent"
+(defun dbg (agent &rest args)
+  (format t "agent ~a: ~a"
+	  (core:agent-info-name (info agent))
+	  (apply #'format nil args)))
+
+(defun new-agent (&key info ns clock)
+  "Create a new agent."
   (make-instance 'agent
 		 :info info
-		 :root root
 		 :ns ns
 		 :clock clock))
 
+(defmethod start (agent)
+  "Start the agent. Must be called first after creation. Returns the agent."
+  (register agent)
+  agent)
+
+(defmethod ns-entry-name (agent)
+  (format nil "/agent/~a" (core:agent-info-name (info agent))))
+
 (defmethod register (agent)
-  (dbg agent "registering ~a" (core:agent-name (info agent)))
+  (dbg agent "registering with nameserver")
   (ns:register
    (nameserv agent)
-   (format nil "/agent/~a" (core:agent-name (info agent)))
+   (ns-entry-name agent)
    agent
    (info agent)))
-
-(defmethod start (agent)
-  (register agent))
 
 (defmethod set-state (agent state)
   (dbg agent "set-state ~a" state)
@@ -64,8 +65,8 @@
 (defmethod stop (agent)
   nil)
 
-;;; TODO: rename. avoid collision with cl:step
-(defmethod step-agent (agent)
+(defmethod dostep (agent)
+  "Advance the agent to the current clock time."
   (case (core:agent-state (info agent))
     (:active (step-active agent))
     (:sleeping (step-sleeping agent))

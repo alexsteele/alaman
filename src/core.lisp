@@ -2,18 +2,18 @@
 (defpackage alaman.core
   (:use #:cl)
   (:nicknames "core")
-  (:export #:agent
-	   #:device
+  (:export #:agent-info
+	   #:device-info
 	   #:command
 	   #:event
-	   #:feature
+	   #:object
 	   #:universe
 	   #:new-system-clock
 	   #:clock-time))
 (in-package :alaman.core)
 
-(defstruct agent
-  "An agent in the universe. Agents execute commands and log events."
+(defstruct agent-info
+  "Information about an agent."
   (id "")
   (name "")
   (address "")
@@ -24,11 +24,8 @@
   (location nil)
   (last-seen nil))
 
-(defstruct device
-  "A device. Devices may be passive (e.g. thermometer) or
-active (e.g. actuator). Devices record data in 'vars' and may log
-events. Active devices can execute commands. Devices may be attached
-to agents."
+(defstruct device-info
+  "Information about a device."
   (id "")
   (name "")
   (kind nil)
