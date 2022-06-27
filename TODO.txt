@@ -1,2 +1,5 @@
 
-* Update README
+* Map generation
+* Add simple commands
+* Hook up sim
+* Admin UI

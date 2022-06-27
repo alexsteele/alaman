@@ -31,6 +31,7 @@ The simulation can run in discrete time steps or real time.
 Some other ideas for this project:
 
 * Simulate activity in the real world with OpenStreetMap data
-* Antagonistic and chaotic agent types
+* Antagonistic and chaotic agents
 * Collect feeds of event data from agents
-* Allow admins to submit goals which are translated into plans executed by agents
+* Translate language commands into execution plans
+* Translate goals into into low-level actions
