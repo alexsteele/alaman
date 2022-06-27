@@ -28,7 +28,14 @@
 
 (test agent-start
   (agent:start *agent*)
-  (is (ns:existsp *ns* "/agent/agent-name")))
+  (is (ns:existsp *ns* "/agent/agent-name"))
+  (is (equal :active (agent:state *agent*))))
+
+(test agent-stop
+  (agent:start *agent*)
+  (agent:stop *agent*)
+  (is (equal :stopped (agent-state *agent*)))
+  (is (equal :stopped (agent-info-state (ns:lookup *ns* "/agent/agent-name")))))
 
 ;(run! 'agent-tests)
 

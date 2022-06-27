@@ -6,23 +6,23 @@
    (:core :alaman.core)
    (:ns :alaman.ns))
   (:export #:new-agent
+	   #:info
 	   #:start
 	   #:stop
-	   #:submit-command
-	   #:agent-step))
+	   #:submit
+	   #:dostep))
 
 (in-package :alaman.agent)
 
 (defclass agent ()
   ((info
-    :initarg :info
-    :accessor info)
+    :initarg :info)
    (ns
     :initarg :ns
-    :accessor nameserv)
+    :reader nameserv)
    (clock
     :initarg :clock
-    :accessor clock)
+    :reader clock)
    (commands
     :initform nil
     :accessor commands)
@@ -31,8 +31,8 @@
     :accessor sleep-until)))
 
 (defun dbg (agent &rest args)
-  (format t "agent ~a: ~a"
-	  (core:agent-info-name (info agent))
+  (format t "agent ~a: ~a~%"
+	  (core:agent-info-name (pinfo agent))
 	  (apply #'format nil args)))
 
 (defun new-agent (&key info ns clock)
@@ -42,13 +42,33 @@
 		 :ns ns
 		 :clock clock))
 
+(defmethod info (agent)
+  "Returns a copy of the agent's core:agent-info."
+  (core:copy-agent-info (slot-value agent 'info)))
+
+(defmethod pinfo (agent)
+  "Internal version of info without the copy."
+  (slot-value agent 'info))
+
 (defmethod start (agent)
-  "Start the agent. Must be called first after creation. Returns the agent."
+  "Start and return the agent. Must be called after creation."
+  (dbg agent "start")
+  (set-state agent :active)
+  (register agent)
+  agent)
+
+(defmethod stop (agent)
+  "Stop and return the agent."
+  (dbg agent "stop")
+  (set-state agent :stopped)
   (register agent)
   agent)
 
 (defmethod ns-entry-name (agent)
-  (format nil "/agent/~a" (core:agent-info-name (info agent))))
+  (format nil "/agent/~a" (core:agent-info-name (pinfo agent))))
+
+(defmethod state (agent)
+  (core:agent-info-state (pinfo agent)))
 
 (defmethod register (agent)
   (dbg agent "registering with nameserver")
@@ -60,17 +80,16 @@
 
 (defmethod set-state (agent state)
   (dbg agent "set-state ~a" state)
-  (setf (core:agent-state (info agent)) state))
-
-(defmethod stop (agent)
-  nil)
+  (setf (core:agent-info-state (pinfo agent)) state)
+  agent)
 
 (defmethod dostep (agent)
   "Advance the agent to the current clock time."
-  (case (core:agent-state (info agent))
+  (case (state agent)
     (:active (step-active agent))
     (:sleeping (step-sleeping agent))
-    (t (error "unrecognized state"))))
+    (t (error "unrecognized state")))
+  agent)
 
 (defmethod step-active (agent)
   (exec-commands agent))
@@ -88,5 +107,5 @@
   (set-state agent :active)
   (setf (sleep-until agent) nil))
 
-(defmethod submit-command (agent command)
+(defmethod submit (agent command)
   (push command (commands agent)))
