@@ -18,6 +18,7 @@
   "Simulation specification."
   (name nil)
   (folder nil)
+  (rng nil)
   (universe nil)
   (admin nil)
   (agents nil)
