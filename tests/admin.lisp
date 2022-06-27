@@ -29,4 +29,5 @@
   (is (ns:existsp *ns* "/admin"))
   (is (equalp (admin:list-agents *admin*) (list (make-agent-info :id "0")))))
 
-(run! 'admin-start)
+; (run! 'admin-tests)
+
