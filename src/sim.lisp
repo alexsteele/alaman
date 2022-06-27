@@ -22,5 +22,8 @@
 (defun run (sim) nil)
 (defun dostep (sim) nil)
 (defun stop (sim) nil)
+(defun submit (command) nil)
+(defun exec (command) nil)
+(defun pprint (sim) nil)
 (defun save (sim &optional path) nil)
 (defun load-from (path) nil)

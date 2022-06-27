@@ -61,13 +61,13 @@
 (defun list-agents (admin)
   (hash-table-values (admin-agents admin)))
 
-(defun send-command (command)
+(defun submit (command)
+  nil)
+
+(defun cancel (command-id)
   nil)
 
 (defun list-commands ()
-  nil)
-
-(defun cancel-command (id)
   nil)
 
 (defun agent-check-in (agent-id)
@@ -75,4 +75,3 @@
 
 (defun agent-log-events (agent-id events)
   nil)
-

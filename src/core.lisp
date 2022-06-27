@@ -3,14 +3,48 @@
   (:use #:cl)
   (:nicknames "core")
   (:export #:agent-info
-	   #:device-info
+   	   #:clock-time
 	   #:command
+	   #:device-info
 	   #:event
-	   #:object
-	   #:universe
 	   #:new-system-clock
-	   #:clock-time))
+	   #:object
+	   #:spec
+	   #:tile
+	   #:universe))
 (in-package :alaman.core)
+
+(defstruct spec
+  "Simulation specification."
+  (name nil)
+  (folder nil)
+  (universe nil)
+  (admin nil)
+  (agents nil)
+  (nameserver nil)
+  (clock nil))
+
+(defstruct universe
+  "A map of the universe."
+  (dims '(1000 1000))
+  (tiles nil)
+  (entities nil))
+
+(defstruct tile
+  "A tile in the universe."
+  (location nil)
+  (entities nil))
+
+(defstruct object
+  "An object in the universe."
+  (id "")
+  (name "")
+  (kind nil)
+  (tags nil)
+  (vars nil)
+  (version 0)
+  (created-at nil)
+  (updated-at nil))
 
 (defstruct agent-info
   "Information about an agent."
@@ -36,7 +70,7 @@
   (vars nil))
 
 (defstruct command
-  "A command is an action to be performed by an agent or device."
+  "A command to be performed by an agent."
   (id "")
   (agent-id "")
   (kind nil)
@@ -54,22 +88,6 @@
   (tags nil)
   (vars nil)
   (timestamp nil))
-
-(defstruct object
-  "An object in the universe."
-  (id "")
-  (name "")
-  (kind nil)
-  (tags nil)
-  (vars nil)
-  (version 0)
-  (created-at nil)
-  (updated-at nil))
-
-(defstruct universe
-  "A map of the universe."
-  (dims '(1000 1000))
-  (entities nil))
 
 ;; TODO: Support different implementations
 (defun new-system-clock () nil)
