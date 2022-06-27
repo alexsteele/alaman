@@ -1,4 +1,4 @@
-
+* Eliminate :local-nicknames
 * Map generation
 * Add simple commands
 * Hook up sim
