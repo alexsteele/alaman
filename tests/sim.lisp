@@ -20,8 +20,10 @@
 (defvar *spec* nil)
 (defvar *sim* (sim:init *spec*))
 
+(test rand-spec
+  (sim:init (sim:rand-spec)))
+
 (test sim-start
   (sim:start *sim*))
 
-; (run! 'sim-tests)
-
+;(run! 'sim-tests)
