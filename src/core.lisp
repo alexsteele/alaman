@@ -8,7 +8,6 @@
 	   #:device-info
 	   #:event
 	   #:new-id
-	   #:new-system-clock
 	   #:object
 	   #:spec
 	   #:tile
@@ -91,23 +90,19 @@
   (vars nil)
   (timestamp nil))
 
+;; ID generation
 (defvar *charset* "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 
-(defun rand-select (seq)
-  (elt seq (random (length seq))))
+;; TODO: Use UUID
+(defun new-id () (rand-string 16))
 
 (defun rand-string (length)
   (map 'string
        #'(lambda (_) (rand-select *charset*))
        (make-string length)))
 
-;; TODO: Use UUID
-(defun new-id () (rand-string 16))
-
-;; TODO: Support different implementations
-(defun new-system-clock () nil)
-(defun clock-time (clock)
-  (get-universal-time))
+(defun rand-select (seq)
+  (elt seq (random (length seq))))
 
 ;;; TODO: Limit exports?
 (defun export-all (pkg)

@@ -90,6 +90,7 @@
 
 (defmethod dostep (agent)
   "Advance the agent to the current clock time. Returns a list of completed commands."
+  ;; TODO: Get clock time
   (dbg agent "step")
   (case (state agent)
     (:active (step-active agent))
@@ -114,4 +115,3 @@
   (dbg agent "waking up")
   (set-state agent :active)
   (setf (sleep-until agent) nil))
-
