@@ -49,7 +49,7 @@ The simulation can run in discrete time steps or real time.
   do (sim:dostep S))
 
 ;; Short version: run a command to completion
-(sim:exec C)
+(sim:exec S C)
 ```
 
 ## Ideas
