@@ -40,16 +40,16 @@ The simulation can run in discrete time steps or real time.
 ;; Execute continuously
 (sim:run S :until time)
 
-;; Run a command to completion
-(defvar C (command :kind :no-op))
-(sim:run C)
-
 ;; Submit a command
+(defvar C (command :kind :no-op))
 (sim:submit S C)
 
 ;; Poll for completion
 (loop while (not (cmd:donep C))
   do (sim:dostep S))
+
+;; Short version: run a command to completion
+(sim:exec C)
 ```
 
 ## Ideas
