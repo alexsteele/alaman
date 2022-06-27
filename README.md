@@ -26,6 +26,32 @@ The simulation can run in discrete time steps or real time.
 
 ## Installation
 
+## Examples
+
+```lisp
+;; Create a simulation
+(defvar S (sim:init (sim:rand-spec)))
+(sim:start S)
+
+;; Execute a single step
+(sim:dostep S)
+(sim:pprint S)
+
+;; Execute continuously
+(sim:run S :until time)
+
+;; Run a command to completion
+(defvar C (command :kind :no-op))
+(sim:run C)
+
+;; Submit a command
+(sim:submit S C)
+
+;; Poll for completion
+(loop while (not (cmd:donep C))
+  do (sim:dostep S))
+```
+
 ## Ideas
 
 Some other ideas for this project:
