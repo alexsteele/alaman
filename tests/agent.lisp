@@ -34,8 +34,14 @@
 (test agent-stop
   (agent:start *agent*)
   (agent:stop *agent*)
-  (is (equal :stopped (agent-state *agent*)))
+  (is (equal :stopped (agent:state *agent*)))
   (is (equal :stopped (agent-info-state (ns:lookup *ns* "/agent/agent-name")))))
 
-;(run! 'agent-tests)
+;; TODO: Check command execution
+(test dostep-noop
+  (agent:start *agent*)
+  (agent:submit *agent* (make-command :id "test" :kind :no-op))
+  (agent:dostep *agent*))
+
+; (run! 'agent-tests)
 

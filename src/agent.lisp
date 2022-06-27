@@ -7,6 +7,7 @@
    (:ns :alaman.ns))
   (:export #:new-agent
 	   #:info
+	   #:state
 	   #:start
 	   #:stop
 	   #:submit
@@ -83,10 +84,16 @@
   (setf (core:agent-info-state (pinfo agent)) state)
   agent)
 
+(defmethod submit (agent command)
+  "Submit a command for execution."
+  (push command (commands agent)))
+
 (defmethod dostep (agent)
-  "Advance the agent to the current clock time."
+  "Advance the agent to the current clock time. Returns a list of completed commands."
+  (dbg agent "step")
   (case (state agent)
     (:active (step-active agent))
+    (:stopped nil)  ;; No-op
     (:sleeping (step-sleeping agent))
     (t (error "unrecognized state")))
   agent)
@@ -94,8 +101,9 @@
 (defmethod step-active (agent)
   (exec-commands agent))
 
+;; TODO: implement
 (defmethod exec-commands (agent)
-  (printf (commands agent)))
+  nil)
 
 (defmethod step-sleeping (agent)
   (let ((ts (core:clock-time (clock agent))))
@@ -107,5 +115,3 @@
   (set-state agent :active)
   (setf (sleep-until agent) nil))
 
-(defmethod submit (agent command)
-  (push command (commands agent)))
