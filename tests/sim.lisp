@@ -17,13 +17,16 @@
 
 (defvar *ns* (ns:init))
 (defvar *clock* (new-system-clock))
-(defvar *spec* nil)
+(defvar *spec* (sim:rand-spec))
 (defvar *sim* (sim:init *spec*))
 
 (test rand-spec
   (sim:init (sim:rand-spec)))
 
-(test sim-start
-  (sim:start *sim*))
+(test sim-lifecycle
+  (sim:start *sim*)
+  (sim:dostep *sim*)
+  (sim:dostep *sim*)
+  (sim:stop *sim*))
 
-;(run! 'sim-tests)
+(run! 'sim-tests)

@@ -1,8 +1,7 @@
 (defpackage alaman.sim
-  (:use #:cl)
+  (:use #:cl #:alaman.core #:alaman.time)
   (:import-from :alaman.admin)
   (:import-from :alaman.agent)
-  (:import-from :alaman.core)
   (:import-from :alaman.ns)
   (:import-from :alaman.time)
   (:local-nicknames
@@ -26,6 +25,7 @@
   (id "")
   (spec nil)
   (universe nil)
+  (clock nil)
   (admin nil)
   (agents nil))
 
@@ -33,18 +33,43 @@
 (defun rand-spec ()
   (let* ((nameserver (ns:init))
 	(clock (time:new-system-clock)))
-    (core:make-spec
+    (make-spec
      :clock clock
      :nameserver nameserver
      :admin (admin:init :folder nil
 			:ns nameserver
 			:clock clock))))
 
-(defun init (spec))
-(defun start (sim) nil)
-(defun run (sim) nil)
-(defun dostep (sim) nil)
-(defun stop (sim) nil)
+(defun init (spec)
+  (make-sim :id (new-id)
+	    :spec spec
+	    :universe (spec-universe spec)
+	    :clock (spec-clock spec)
+	    :admin (spec-admin spec)
+	    :agents (spec-agents spec)))
+
+(defun start (sim)
+  (admin:start (sim-admin sim))
+  (dolist (agent (sim-agents sim))
+    (agent:start agent))
+  sim)
+
+(defun dostep (sim)
+  (let ((clock (sim-clock sim)))
+    (clock-tick clock)
+    (clock-pin clock)
+    (admin:dostep (sim-admin sim))
+    (dolist (agent (sim-agents sim))
+      (agent:dostep (agent)))
+    (clock-unpin clock))
+  sim)
+
+(defun stop (sim)
+  (admin:stop (sim-admin sim))
+  (dolist (agent (sim-agents sim))
+    (agent:stop (agent)))
+  sim)
+
 (defun spawn-agent (sim &optional agent) "Spawn an agent" nil)
 (defun submit (command) nil)
 (defun exec (command) nil)
