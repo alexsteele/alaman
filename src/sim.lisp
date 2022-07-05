@@ -20,27 +20,25 @@
 	   #:load-from))
 (in-package :alaman.sim)
 
-(defun rand-agent (clock nameserver)
-  (let* ((id (new-id))
-	 (name (format nil "agent_~a" id))
-	 (info (make-agent-info :id id :name name)))
-    (agent:init :info info
-		:clock clock
-		:ns nameserver)))
+(defun make-agents (count clock nameserver)
+  (let ((names (agent:make-agent-names count)))
+    (loop for name in names
+	  collect (agent:init :info (make-agent-info :id (new-id) :name name)
+			      :clock clock
+			      :ns nameserver))))
 
 ;; TODO: Init universe
 (defun rand-spec ()
+  "Creates a randomized core:spec."
   (let* ((nameserver (ns:init))
-	 (cl (new-system-clock)))
+	 (clock (new-system-clock)))
     (make-spec
-     :clock cl
+     :clock clock
      :nameserver nameserver
      :admin (admin:init :folder nil
 			:ns nameserver
-			:clock cl)
-     :agents (list (rand-agent cl nameserver)
-		   (rand-agent cl nameserver)
-		   (rand-agent cl nameserver)))))
+			:clock clock)
+     :agents (make-agents 3 clock nameserver))))
 
 (defstruct sim
   "Simulation state."

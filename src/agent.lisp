@@ -5,7 +5,9 @@
   (:local-nicknames
    (:core :alaman.core)
    (:ns :alaman.ns))
-  (:export #:init
+  (:export #:make-agent-name
+	   #:make-agent-names
+	   #:init
 	   #:info
 	   #:state
 	   #:start
@@ -14,6 +16,35 @@
 	   #:dostep))
 
 (in-package :alaman.agent)
+
+(defvar *agent-name-prefixes* '(aerobic magic miserly misfit insolent tall short speedy zippy turvy rotund))
+(defvar *agent-name-suffixes* '(agent automaton bot droid machine))
+
+(defun make-agent-name ()
+  (format nil "~a-~a"
+	  (rand-select *agent-name-prefixes*)
+	  (rand-select *agent-name-suffixes*)))
+
+(defun make-agent-name-with-suffix ()
+  (format nil "~a-~a" (make-agent-name) (random 10000)))
+
+(defun try-make-unique-agent-name (used)
+  (dotimes (i 10)
+    (let ((name (if (> i 5) (make-agent-name-with-suffix) (make-agent-name))))
+      (when (null (find name used))
+	(return name)))))
+
+(defun make-unique-agent-name (used)
+  (let ((name (try-make-unique-agent-name used)))
+    (if (null name)
+	(error "could not make unique agent name")
+	name)))
+
+(defun make-agent-names (count)
+  (let ((names nil))
+    (dotimes (i count)
+      (setf names(cons (make-unique-agent-name names) names)))
+    names))
 
 (defclass agent ()
   ((info

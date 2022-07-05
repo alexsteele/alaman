@@ -15,6 +15,10 @@
 
 (in-suite agent-tests)
 
+(test agent-names
+  (is (not (null (agent:make-agent-name))))
+  (is (not (null (agent:make-agent-names 5)))))
+
 (defvar *ns* (ns:init))
 (defvar *info* (make-agent-info
 		:id "agent-id"
