@@ -5,4 +5,5 @@
 (defun main ()
   (print "hello world"))
 
-(print "hello world")
+(defun start-alaman ()
+  (main))

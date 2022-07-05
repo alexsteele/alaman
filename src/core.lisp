@@ -1,4 +1,5 @@
-;; Note: No defpackage alaman.core since core is auto-defined???
+(defpackage alaman.core
+  (:use #:cl))
 (in-package :alaman.core)
 
 (defstruct spec

@@ -1,4 +1,5 @@
 (require :asdf)
+(require :fiveam)
 
 (asdf:defsystem "alaman"
   :version "0.1.0"
@@ -30,3 +31,10 @@
 	       (:file "sim"))
   :description "Test system for alaman"
   :perform (test-op (op c) (symbol-call :fiveam :run! c)))
+
+(defsystem "alaman/executable"
+  :build-operation program-op
+  :build-pathname "alaman"
+  :entry-point "alaman::start-alaman"
+  :depends-on ("alaman")
+  :components ((:file "src/main")))
