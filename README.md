@@ -26,6 +26,12 @@ The simulation can run in discrete time steps or real time.
 
 ## Installation
 
+Alaman is written in common lisp and using the asdf packaging system.
+
+1. Clone the repo under an asdf path (e.g. `~/common-lisp`).
+2. Start an sbcl repl or SLIME emacs session.
+3. Load the system with `(asdf:load-system "alaman")`
+
 ## Examples
 
 ```lisp
