@@ -5,14 +5,15 @@
   :author "Alex Steele"
   :license "MIT"
   :depends-on (:alexandria :uiop)
-  :components ((:module "src"
-                :components
-                ((:file "admin")
-		 (:file "agent")
-		 (:file "core")
-		 (:file "main")
-		 (:file "ns")
-		 (:file "sim"))))
+  :pathname "src/"
+  :components
+  ((:file "admin" :depends-on ("core" "time" "ns"))
+   (:file "agent" :depends-on ("core" "time" "ns"))
+   (:file "core")
+   (:file "ns")
+   (:file "time")
+   (:file "sim" :depends-on ("admin" "agent" "core" "ns" "time"))
+   (:file "main" :depends-on ("sim")))
   :description "agent simulation"
   :in-order-to ((test-op (test-op "alaman/tests")))
   :entry-point "alaman:main")
@@ -22,9 +23,10 @@
   :license ""
   :depends-on ("alaman"
 	       "fiveam")
-  :components ((:module "tests"
-                :components
-                ((:file "main")
-		 (:file "ns"))))
+  :pathname "tests/"
+  :components ((:file "admin")
+	       (:file "agent")
+	       (:file "ns")
+	       (:file "sim"))
   :description "Test system for alaman"
   :perform (test-op (op c) (symbol-call :fiveam :run! c)))
