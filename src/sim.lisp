@@ -76,13 +76,6 @@
     (clock-unpin clock))
   sim)
 
-(defvar *spec* (rand-spec))
-(defvar *sim* (init *spec*))
-(start *sim*)
-(format t "~a" *spec*)
-(format t "~a" *sim*)
-(dostep *sim*)
-
 (defun stop (sim)
   (admin:stop (sim-admin sim))
   (dolist (agent (sim-agents sim))
