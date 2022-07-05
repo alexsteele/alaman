@@ -67,3 +67,7 @@ Some other ideas for this project:
 * Collect feeds of event data from agents
 * Translate language commands into execution plans
 * Translate goals into into low-level actions
+
+## Resources
+
+* [ASDF Best Practices](https://github.com/fare/asdf/blob/master/doc/best_practices.md)
