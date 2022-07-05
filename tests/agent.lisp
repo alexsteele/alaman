@@ -1,4 +1,5 @@
 (defpackage alaman/tests/agent
+  (:use #:alaman.time)
   (:import-from :alaman.agent)
   (:import-from :alaman.core)
   (:import-from :alaman.ns)
@@ -18,10 +19,9 @@
 (defvar *info* (make-agent-info
 		:id "agent-id"
 		:name "agent-name"
-		:address "agent-addr"
 		:settings '((root . "/tmp/test-agent"))))
 (defvar *clock* (new-system-clock))
-(defvar *agent* (agent:new-agent
+(defvar *agent* (agent:init
 		 :info *info*
 		 :ns *ns*
 		 :clock *clock*))
@@ -43,5 +43,4 @@
   (agent:submit *agent* (make-command :id "test" :kind :no-op))
   (agent:dostep *agent*))
 
-; (run! 'agent-tests)
-
+(run! 'agent-tests)

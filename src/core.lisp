@@ -1,17 +1,4 @@
-;; Core types
-(defpackage alaman.core
-  (:use #:cl)
-  (:nicknames "core")
-  (:export #:agent-info
-   	   #:clock-time
-	   #:command
-	   #:device-info
-	   #:event
-	   #:new-id
-	   #:object
-	   #:spec
-	   #:tile
-	   #:universe))
+;; Note: No defpackage alaman.core since core is auto-defined???
 (in-package :alaman.core)
 
 (defstruct spec
@@ -51,7 +38,6 @@
   "Information about an agent."
   (id "")
   (name "")
-  (address "")
   (state nil)
   (tags nil)
   (settings nil)
@@ -90,21 +76,19 @@
   (vars nil)
   (timestamp nil))
 
-;; ID generation
 (defvar *charset* "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 
-;; TODO: Use UUID
+;; TODO: Use UUID?
 (defun new-id () (rand-string 16))
 
 (defun rand-string (length)
   (map 'string
-       #'(lambda (_) (rand-select *charset*))
+       #'(lambda (x) (rand-select *charset*))
        (make-string length)))
 
 (defun rand-select (seq)
   (elt seq (random (length seq))))
 
-;;; TODO: Limit exports?
 (defun export-all (pkg)
   (let ((pack (find-package pkg)))
     (do-symbols (sym pack)

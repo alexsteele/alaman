@@ -46,16 +46,16 @@
 	     (agents (admin-agents admin)))
 	(setf (gethash id agents) info)))))
 
-(defun dostep ()
+(defun dostep (admin)
   nil)
 
-(defun stop ()
+(defun stop (admin)
   nil)
 
-(defun register-agent (info)
+(defun register-agent (admin info)
   nil)
 
-(defun describe-agent (name)
+(defun describe-agent (admin name)
   nil)
 
 (defun list-agents (admin)

@@ -1,4 +1,5 @@
 (defpackage alaman/tests/admin
+  (:use #:alaman.time)
   (:import-from :alaman.admin)
   (:import-from :alaman.core)
   (:import-from :alaman.ns)

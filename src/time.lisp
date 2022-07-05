@@ -21,8 +21,8 @@
   "A default clock that returns the system time. Cannot be set."
   (make-instance 'clock))
 (defmethod clock-time (clock) (get-universal-time))
-(defmethod clock-tick (clock) (clock-time))
-(defmethod clock-set (clock time) (clock-time))
+(defmethod clock-tick (clock) (clock-time clock))
+(defmethod clock-set (clock time) (clock-time clock))
 (defmethod clock-pin (clock)
   "Pin the clock at the current time.
 While pinned, clock-time will return the pinned time, but clock-tick

@@ -1,4 +1,5 @@
 (defpackage alaman/tests/admin
+  (:use #:alaman.time)
   (:import-from :alaman.sim)
   (:import-from :alaman.core)
   (:import-from :alaman.ns)
@@ -19,9 +20,6 @@
 (defvar *clock* (new-system-clock))
 (defvar *spec* (sim:rand-spec))
 (defvar *sim* (sim:init *spec*))
-
-(test rand-spec
-  (sim:init (sim:rand-spec)))
 
 (test sim-lifecycle
   (sim:start *sim*)

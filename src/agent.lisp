@@ -1,11 +1,11 @@
 (defpackage alaman.agent
-  (:use #:cl #:alaman.core)
+  (:use #:cl #:alaman.core #:alaman.time)
   (:import-from :alaman.ns)
   (:import-from :alaman.core)
   (:local-nicknames
    (:core :alaman.core)
    (:ns :alaman.ns))
-  (:export #:new-agent
+  (:export #:init
 	   #:info
 	   #:state
 	   #:start
@@ -36,7 +36,7 @@
 	  (core:agent-info-name (pinfo agent))
 	  (apply #'format nil args)))
 
-(defun new-agent (&key info ns clock)
+(defun init (&key info ns clock)
   "Create a new agent."
   (make-instance 'agent
 		 :info info
@@ -90,7 +90,6 @@
 
 (defmethod dostep (agent)
   "Advance the agent to the current clock time. Returns a list of completed commands."
-  ;; TODO: Get clock time
   (dbg agent "step")
   (case (state agent)
     (:active (step-active agent))
@@ -107,7 +106,7 @@
   nil)
 
 (defmethod step-sleeping (agent)
-  (let ((ts (core:clock-time (clock agent))))
+  (let ((ts (clock-time (clock agent))))
     (when (> ts (sleep-until agent))
       (wakeup agent))))
 
