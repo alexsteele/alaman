@@ -3,12 +3,14 @@
   (:import-from :alaman.admin)
   (:import-from :alaman.agent)
   (:import-from :alaman.ns)
+  (:import-from :alaman.map)
   (:import-from :alaman.time)
   (:local-nicknames
    (:admin :alaman.admin)
    (:agent :alaman.agent)
    (:core :alaman.core)
    (:ns :alaman.ns)
+   (:am :alaman.map)
    (:time :alaman.time))
   (:export #:rand-spec
 	   #:init
@@ -27,7 +29,11 @@
 			      :clock clock
 			      :ns nameserver))))
 
-;; TODO: Init universe
+(defun new-universe ()
+  (let ((dims '(100 100)))
+    (make-universe :dims dims
+		   :tiles (am:uniform-map dims))))
+
 (defun rand-spec ()
   "Creates a randomized core:spec."
   (let* ((nameserver (ns:init))
@@ -35,6 +41,7 @@
     (make-spec
      :clock clock
      :nameserver nameserver
+     :universe (new-universe)
      :admin (admin:init :folder nil
 			:ns nameserver
 			:clock clock)
