@@ -29,7 +29,7 @@
   (fill-map m #'(lambda () (make-tile :kind kind))))
 
 (defun uniform-map (dimensions &optional kind)
-  (fill-tiles (make-array dimensions) (or kind :wheat)))
+  (fill-tiles (make-array dimensions) (or kind :grass)))
 
 (defun map-array (m fn)
   (let ((result (make-array (array-dimensions m))))
