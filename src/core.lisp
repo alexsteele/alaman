@@ -21,6 +21,7 @@
 
 (defstruct tile
   "A tile in the universe."
+  (kind nil)
   (location nil)
   (entities nil))
 
