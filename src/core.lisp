@@ -22,8 +22,17 @@
 (defstruct tile
   "A tile in the universe."
   (kind nil)
+  (climate nil)
   (location nil)
   (entities nil))
+
+(defun tile-at (uni row col)
+  (aref (universe-tiles uni) row col))
+
+(defun tile-at-loc (uni location)
+  "location: '(row col)"
+  (destructuring-bind (row col) location
+    (tile-at uni row col)))
 
 (defstruct object
   "An object in the universe."
