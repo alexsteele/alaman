@@ -16,6 +16,8 @@ The simulation can run in discrete time steps or real time.
 
 ### Devices
 
+* **battery** - powers other devices
+* **solar panel** - collects power
 * **camera** - collects images
 * **gps** - collects location and movement
 * **hygrometer** - collects humidity readings

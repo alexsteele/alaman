@@ -88,8 +88,8 @@
   sim)
 
 (defun spawn-agent (sim &optional agent) "Spawn an agent" nil)
-(defun submit (command) nil)
-(defun exec (command) nil)
+(defun submit (sim command) nil)
+(defun exec (sim command) nil)
 (defun pprint-sim (sim) nil)
 (defun save (sim &optional path) nil)
 (defun load-from (path) nil)
