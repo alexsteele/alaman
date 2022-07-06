@@ -13,6 +13,7 @@
    (:file "core")
    (:file "ns")
    (:file "time")
+   (:file "map" :depends-on ("core"))
    (:file "sim" :depends-on ("admin" "agent" "core" "ns" "time"))
    (:file "main" :depends-on ("sim")))
   :description "agent simulation"
@@ -27,6 +28,7 @@
   :pathname "tests/"
   :components ((:file "admin")
 	       (:file "agent")
+	       (:file "map")
 	       (:file "ns")
 	       (:file "sim"))
   :description "Test system for alaman"
