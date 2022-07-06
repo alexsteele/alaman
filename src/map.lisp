@@ -1,9 +1,12 @@
 (defpackage alaman.map
   (:use #:cl #:alaman.core)
-  (:export #:generate-map))
+  (:export #:generate-map
+	   #:uniform-map
+	   #:fill-tiles
+	   #:tile-kinds))
 (in-package alaman.map)
 
-(defvar *tile-kinds* '(water grass wheat rock))
+(defvar *all-tile-kinds* '(water grass wheat rock))
 
 (defun water ()
   (make-tile :kind :water))
@@ -17,13 +20,9 @@
 (defun rock ()
   (make-tile :kind :rock))
 
-(defvar *tiles* (make-array '(3 3)))
-
 (defun fill-map (m fn)
-  (destructuring-bind (rows cols) (array-dimensions m)
-      (loop for row from 0 below rows do
-	(loop for col from 0 below cols do
-	  (setf (aref m row col) (funcall fn)))))
+  (dotimes (i (array-total-size m))
+    (setf (row-major-aref m i) (funcall fn)))
   m)
 
 (defun fill-tiles (m kind)
@@ -31,3 +30,13 @@
 
 (defun uniform-map (dimensions &optional kind)
   (fill-tiles (make-array dimensions) (or kind :wheat)))
+
+(defun map-array (m fn)
+  (let ((result (make-array (array-dimensions m))))
+    (dotimes (i (array-total-size m))
+      (setf (row-major-aref result i)
+	    (funcall fn (row-major-aref m i))))
+    result))
+
+(defun tile-kinds (m)
+  (map-array m #'tile-kind))
