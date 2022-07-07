@@ -25,11 +25,13 @@
     (setf (row-major-aref m i) (funcall fn)))
   m)
 
-(defun fill-tiles (m kind)
-  (fill-map m #'(lambda () (make-tile :kind kind))))
+(defun fill-tiles (m &key (kind :grass) (climate :sunny))
+  (fill-map m #'(lambda () (make-tile :kind kind
+				      :climate climate))))
 
-(defun uniform-map (dimensions &optional kind)
-  (fill-tiles (make-array dimensions) (or kind :grass)))
+(defun uniform-map (dimensions &key (kind :grass) (climate :sunny))
+  (fill-tiles (make-array dimensions) :kind kind
+				      :climate climate))
 
 (defun map-array (m fn)
   (let ((result (make-array (array-dimensions m))))
