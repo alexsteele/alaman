@@ -7,6 +7,7 @@
 (in-package alaman.map)
 
 (defvar *all-tile-kinds* '(water grass wheat rock))
+(defvar *all-climates* '(:sunny :cloudy :rainy))
 
 (defun water ()
   (make-tile :kind :water))
