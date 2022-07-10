@@ -40,9 +40,12 @@ may still advance the clock's internal state."
     :initarg :tick-amount
     :accessor tick-amount)))
 
-(defun new-fixed-clock (init-val tick-amount)
+(defun new-fixed-clock (&key (init-val 0) (tick-amount 0))
   (make-instance 'fixed-clock :val init-val
 			      :tick-amount tick-amount))
+
+(defmethod clock-set ((clock fixed-clock) time)
+  (setf (val clock) time))
 
 (defmethod clock-tick ((clock fixed-clock))
   (setf (val clock) (+ (val clock) (tick-amount clock)))
