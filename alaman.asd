@@ -11,6 +11,7 @@
   ((:file "admin" :depends-on ("core" "time" "ns"))
    (:file "agent" :depends-on ("core" "time" "ns"))
    (:file "core")
+   (:file "command" :depends-on ("core"))
    (:file "device" :depends-on ("core" "map"))
    (:file "ns")
    (:file "time")
