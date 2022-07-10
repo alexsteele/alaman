@@ -4,6 +4,11 @@
 	   #:sleep-until))
 (in-package :alaman.command)
 
+(defun no-op ()
+  (make-command :id (new-id)
+		:kind :no-op
+		:state :start))
+
 (defun move-to (location)
   (make-command :id (new-id)
 		:kind :move
