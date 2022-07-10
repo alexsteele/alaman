@@ -27,11 +27,12 @@
   :depends-on ("alaman"
 	       "fiveam")
   :pathname "tests/"
-  :components ((:file "admin")
-	       (:file "agent")
-	       (:file "map")
-	       (:file "ns")
-	       (:file "sim"))
+  :components ((:file "admin-test")
+	       (:file "agent-test")
+	       (:file "device-test")
+	       (:file "map-test")
+	       (:file "ns-test")
+	       (:file "sim-test"))
   :description "Test system for alaman"
   :perform (test-op (op c) (symbol-call :fiveam :run! c)))
 
