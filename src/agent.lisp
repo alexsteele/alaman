@@ -17,6 +17,8 @@
 
 (in-package :alaman.agent)
 
+;; Names ------------------------------------------------------------
+
 (defvar *agent-name-prefixes* '(aerobic magic miserly misfit insolent tall short speedy zippy turvy rotund))
 (defvar *agent-name-suffixes* '(agent automaton bot droid machine))
 
