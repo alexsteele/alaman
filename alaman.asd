@@ -13,6 +13,7 @@
    (:file "core")
    (:file "command" :depends-on ("core"))
    (:file "device" :depends-on ("core" "map"))
+   (:file "event" :depends-on ("core"))
    (:file "ns")
    (:file "time")
    (:file "map" :depends-on ("core"))
