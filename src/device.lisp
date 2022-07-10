@@ -30,8 +30,11 @@
     :initarg :drain-rate ; per second
     :reader drain-rate)))
 
-(defun new-battery (&key (drain-rate 0.0))
-  (make-instance 'battery :capacity 100 :level 100 :drain-rate drain-rate))
+(defun new-battery (&key (info (core:make-device-info)) (drain-rate 0.0))
+  (make-instance 'battery :info info
+			  :capacity 100
+			  :level 100
+			  :drain-rate drain-rate))
 
 (defmethod replenish (battery n)
   (setf (level battery) (min (+ n (level battery))
@@ -56,10 +59,11 @@
     :initarg :fill-rate
     :reader fill-rate)))
 
-(defun new-solar-panel (&key location universe (fill-rate 1.0) (battery nil))
+(defun new-solar-panel (&key location universe (info (core:make-device-info)) (fill-rate 1.0) (battery nil))
   (assert location)
   (assert universe)
-  (make-instance 'solar-panel :location location
+  (make-instance 'solar-panel :info info
+			      :location location
 			      :universe universe
 			      :fill-rate fill-rate
 			      :battery battery))
@@ -104,8 +108,10 @@
     :initarg :max-thrust
     :reader max-thrust)))
 
-(defun new-engine (&key battery (max-drain-rate 1.0) (max-thrust 100.0))
-  (make-instance 'engine :battery battery
+(defun new-engine (&key battery (info (core:make-device-info)) (max-drain-rate 1.0) (max-thrust 100.0))
+  (assert battery)
+  (make-instance 'engine :info info
+			 :battery battery
 			 :output 0.0
 			 :max-drain-rate max-drain-rate
 			 :max-thrust max-thrust))
