@@ -12,22 +12,22 @@
 
 (in-suite device-tests)
 
-(test battery
-  (let ((b (dev:new-battery)))
-    (is (= 100 (dev:capacity b)))
-    (is (= 100 (dev:level b)))
-    (dev:consume b 60)
-    (is (= 40 (dev:level b)))
-'    (dev:replenish b 100) ; fills to capacity=100
-    (is (= 100 (dev:level b)))))
+(test battery-test
+  (let ((bat (dev:new-battery)))
+    (is (= 100 (dev:capacity bat)))
+    (is (= 100 (dev:level bat)))
+    (dev:consume bat 60)
+    (is (= 40 (dev:level bat)))
+    (dev:replenish bat 100) ; fills to capacity=100
+    (is (= 100 (dev:level bat)))))
 
-(test solar-panel
+(test solar-panel-test
   (let* ((tiles (am:uniform-map '(1 1) :climate :sunny))
 	 (U (make-universe :tiles tiles))
 	 (panel (dev:new-solar-panel :location '(0 0)
 				     :universe U
 				     :fill-rate 1.0))
-	 (bat (new-battery)))
+	 (bat (dev:new-battery)))
 
     (is (null (dev:battery panel)))
     (dev:detach panel) ; no-op
@@ -42,8 +42,39 @@
     (is (equalp 60.0 (dev:level bat)))
 
     ; cloudy? no change
-    (fill-tiles tiles :climate :cloudy)
+    (am:fill-tiles tiles :climate :cloudy)
     (dev:dostep panel 10)
     (is (equalp 60.0 (dev:level bat)))))
+
+(test engine-test
+  (let* ((bat (dev:new-battery))
+	 (eng (dev:new-engine :battery bat)))
+
+    (is (= (dev:output eng) 0.0))
+    (is (= (dev:thrust eng) 0.0))
+
+    ;; No output
+    (dev:govern eng 0.0)
+    (dev:dostep eng 1.0)
+    (is (= (dev:thrust eng) 0.0))
+    (is (= (dev:level bat) 100.0))
+
+    ;; Max output
+    (dev:govern eng 1.0)
+    (is (= (dev:thrust eng) 100.0))
+    (dev:dostep eng 1.0)
+    (is (= (dev:level bat) 99.0))
+    (dev:dostep eng 9.0)
+    (is (= (dev:level bat) 90.0))
+
+    ;; Consume entire battery. Output should be adjusted.
+    (dev:dostep eng 100.0)
+    (is (= (dev:output eng) 0.9)) ; elapsed-sec / battery level
+    (is (= (dev:thrust eng) 90.0)) ; .9 * max-thrust
+
+    ;; One more step.
+    (dev:dostep eng 1.0)
+    (is (= (dev:output eng) 0.0))
+    (is (= (dev:thrust eng) 0.0))))
 
 (run! 'device-tests)
