@@ -23,40 +23,78 @@
   (is (not (null (agent:make-agent-name))))
   (is (not (null (agent:make-agent-names 5)))))
 
-(defvar *ns* (ns:init))
-(defvar *info* (make-agent-info :id "agent-id"
-				:name "agent-name"
-				:settings '((root . "/tmp/test-agent"))))
-(defvar *clock* (new-system-clock))
-(defvar *agent* (agent:init :info *info*
-			    :ns *ns*
-			    :clock *clock*))
+(test agent-start-stop
+    (let* ((info (make-agent-info :id "agent-id" :name "agent-name"))
+	   (clock (new-fixed-clock :init-val 0 :tick-amount 0))
+	   (NS (ns:init))
+	   (A (agent:init :info info :ns NS :clock clock)))
 
-(test agent-start
-  (agent:start *agent*)
-  (is (ns:existsp *ns* "/agent/agent-name"))
-  (is (equal :active (agent:state *agent*))))
+      (agent:start A)
+      (is (ns:existsp NS "/agent/agent-name"))
+      (is (equal :active (agent:state A)))
 
-(test agent-stop
-  (agent:start *agent*)
-  (agent:stop *agent*)
-  (is (equal :stopped (agent:state *agent*)))
-  (is (equal :stopped (agent-info-state (ns:lookup *ns* "/agent/agent-name")))))
+      (agent:stop A)
+      (is (equal :stopped (agent:state A)))
+      (is (equal :stopped (agent-info-state (ns:lookup NS "/agent/agent-name"))))))
 
-;; TODO: Check command execution
-(test dostep-noop
-  (agent:start *agent*)
-  (agent:submit *agent* (make-command :id "test" :kind :no-op))
-  (agent:dostep *agent*))
+(test dostep-no-commands
+  (let* ((info (make-agent-info :id "agent-id" :name "name"))
+	 (clock (new-fixed-clock :init-val 0 :tick-amount 0))
+	 (NS (ns:init))
+	 (A (agent:init :info info :ns NS :clock clock)))
+    (agent:start A)
+    (clock-set clock 10)
+    (agent:dostep A)
+    (agent:stop A)))
+
+(test no-op-command
+  (let* ((info (make-agent-info :id "agent-id" :name "name"))
+	 (clock (new-fixed-clock :init-val 0 :tick-amount 0))
+	 (NS (ns:init))
+	 (A (agent:init :info info :ns NS :clock clock))
+	 (no-op (cmd:no-op)))
+    (agent:start A)
+    (agent:submit A no-op)
+    (clock-set clock 10)
+    (agent:dostep A)
+
+    (is (equalp :done (core:command-state no-op)))
+
+    (agent:stop A)))
+
+(test sleep-command
+  (let* ((info (make-agent-info :id "agent-id" :name "name"))
+	 (clock (new-fixed-clock :init-val 0 :tick-amount 0))
+	 (NS (ns:init))
+	 (A (agent:init :info info :ns NS :clock clock))
+	 (sleep-cmd (cmd:sleep-until 20)))
+
+    ;; Submit at T=0
+    (agent:start A)
+    (agent:submit A sleep-cmd)
+
+    ;; Step to T=10
+    (clock-set clock 10)
+    (agent:dostep A)
+    (is (equalp :running (core:command-state sleep-cmd)))
+    (is (equalp :sleeping (agent:state A)))
+
+    ;; Step to T=20. Finish.
+    (clock-set clock 20)
+    (agent:dostep A)
+    (is (equalp :done (core:command-state sleep-cmd)))
+    (is (equalp :active (agent:state A)))
+
+    (agent:stop A)))
 
 ;; TODO: implement
-(test rover-agent
-  (let ((C (new-fixed-clock 0 0))
+(defun DISABLED-rover-agent ()
+  (let ((clock (new-fixed-clock 0 0))
 	(NS (ns:init))
 	(tiles (am:uniform-map '(10 10) :kind :grass :climate :sunny))
 	(U (make-universe :tiles tiles))
 	(rover (agent:new-rover :info *info*
-				:clock C
+				:clock clock
 				:ns NS
 				:universe U
 				:location '(0 0)
@@ -72,7 +110,7 @@
     (is (equalp (agent:location rover) '(0 0)))
 
     ;; Now move
-    (clock-set C 1)
+    (clock-set clock 1)
     (agent:dostep *agent*)
     (is (equalp (command-state move-cmd) :done))
     (is (equalp (agent:location rover) '(0 1)))
