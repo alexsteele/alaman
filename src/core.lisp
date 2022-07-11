@@ -74,6 +74,7 @@
   (kind nil)
   (state nil)
   (params nil)
+  (vars nil)
   (run-after nil)
   (start-time nil)
   (end-time nil)

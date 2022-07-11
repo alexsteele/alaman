@@ -25,3 +25,6 @@
 
 (defun param (cmd name)
   (cdr (assoc name (command-params cmd))))
+
+(defun cvar (cmd name)
+  (cdr (assoc name (command-vars cmd))))
