@@ -79,6 +79,8 @@
   (end-time nil)
   (result nil))
 
+(defvar *command-states* '(:new :running :cancelled :done :error))
+
 (defstruct event
   "An event recorded by an agent."
   (id "")

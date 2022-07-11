@@ -9,18 +9,18 @@
 (defun no-op ()
   (make-command :id (new-id)
 		:kind :no-op
-		:state :start))
+		:state :new))
 
 (defun move-to (location)
   (make-command :id (new-id)
 		:kind :move
-		:state :start
+		:state :new
 		:params (list (cons :location location))))
 
 (defun sleep-until (until)
   (make-command :id (new-id)
 		:kind :sleep
-		:state :start
+		:state :new
 		:params (list (cons :until until))))
 
 (defun param (cmd name)
