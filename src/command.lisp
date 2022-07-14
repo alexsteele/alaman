@@ -23,6 +23,9 @@
 		:state :new
 		:params (list (cons :until until))))
 
+(defun state (cmd)
+  (command-state cmd))
+
 (defun param (cmd name)
   (cdr (assoc name (command-params cmd))))
 
