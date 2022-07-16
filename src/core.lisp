@@ -2,6 +2,8 @@
   (:use #:cl))
 (in-package :alaman.core)
 
+;; TODO: I'd like this to be more of a specification and less a set of exact parameters.
+;; Think: min/max agents, map style, etc.
 (defstruct spec
   "Simulation specification."
   (name nil)
@@ -54,6 +56,7 @@
   (settings nil)
   (vars nil)
   (location nil)
+  (orientation nil)
   (last-seen nil))
 
 (defstruct device-info
@@ -97,7 +100,7 @@
 
 (defun rand-string (length)
   (map 'string
-       #'(lambda (x) (rand-select *charset*))
+       #'(lambda (x) (declare (ignore x)) (rand-select *charset*))
        (make-string length)))
 
 (defun rand-select (seq)
