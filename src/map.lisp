@@ -3,6 +3,7 @@
   (:export #:generate-map
 	   #:uniform-map
 	   #:fill-tiles
+	   #:init-from-tile-kinds
 	   #:tile-kinds))
 (in-package alaman.map)
 
@@ -40,6 +41,9 @@
       (setf (row-major-aref result i)
 	    (funcall fn (row-major-aref m i))))
     result))
+
+(defun init-from-tile-kinds (kinds)
+  (map-array kinds #'(lambda (k) (make-tile :kind k))))
 
 (defun tile-kinds (m)
   (map-array m #'tile-kind))
