@@ -246,7 +246,6 @@
 ;; TODO: Routing. Check terrain. Check fuel.
 (defmethod plan-move (agent cmd)
   (let* ((eng (find-dev agent :engine)))
-    (dbg agent "AAA eng ~a" eng)
     (when (not eng)
       (error "no engine"))
     (push-action agent (make-action :fn #'(lambda () (exec-move agent cmd eng))
