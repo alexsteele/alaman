@@ -19,6 +19,9 @@
   "Advance the device state by elapsed-sec."
   dev)
 
+(defmethod kind ((dev device))
+  (core:device-info-kind (info dev)))
+
 (defclass battery (device)
   ((capacity
     :initarg :capacity
@@ -108,7 +111,8 @@
     :initarg :max-thrust
     :reader max-thrust)))
 
-(defun new-engine (&key battery (info (core:make-device-info)) (max-drain-rate 1.0) (max-thrust 100.0))
+(defun new-engine (&key battery (info (core:make-device-info :kind :engine))
+		     (max-drain-rate 1.0) (max-thrust 100.0))
   (assert battery)
   (make-instance 'engine :info info
 			 :battery battery

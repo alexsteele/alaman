@@ -3,6 +3,7 @@
   (:import-from :alaman.agent)
   (:import-from :alaman.core)
   (:import-from :alaman.command)
+  (:import-from :alaman.device)
   (:import-from :alaman.ns)
   (:import-from :alaman.map)
   (:local-nicknames
@@ -10,6 +11,7 @@
    (:ns :alaman.ns)
    (:core :alaman.core)
    (:cmd :alaman.command)
+   (:dev :alaman.device)
    (:am :alaman.map))
   (:use :cl :alaman :fiveam :alaman.core))
 (in-package :alaman/tests/agent)
@@ -47,8 +49,10 @@
     (agent:dostep A)
     (agent:stop A)))
 
+;; command tests
+
 (test no-op-command
-  (let* ((info (make-agent-info :id "agent-id" :name "name"))
+  (let* ((info (make-agent-info :id "agent-id" :name "test-name"))
 	 (clock (new-fixed-clock :init-val 0 :tick-amount 0))
 	 (NS (ns:init))
 	 (A (agent:init :info info :ns NS :clock clock))
@@ -58,12 +62,12 @@
     (clock-set clock 10)
     (agent:dostep A)
 
-    (is (equalp :done (core:command-state no-op)))
+    (is (equalp :done (cmd:state no-op)))
 
     (agent:stop A)))
 
 (test sleep-command
-  (let* ((info (make-agent-info :id "agent-id" :name "name"))
+  (let* ((info (make-agent-info :id "agent-id" :name "test-name"))
 	 (clock (new-fixed-clock :init-val 0 :tick-amount 0))
 	 (NS (ns:init))
 	 (A (agent:init :info info :ns NS :clock clock))
@@ -87,34 +91,31 @@
 
     (agent:stop A)))
 
-;; TODO: implement
-(defun DISABLED-rover-agent ()
-  (let ((clock (new-fixed-clock 0 0))
-	(NS (ns:init))
-	(tiles (am:uniform-map '(10 10) :kind :grass :climate :sunny))
-	(U (make-universe :tiles tiles))
-	(rover (agent:new-rover :info *info*
-				:clock clock
-				:ns NS
-				:universe U
-				:location '(0 0)
-				:max-speed 1))
-	(move-cmd (cmd:move-to '(0 1))))
+(test move-command
+  (let* ((info (make-agent-info :id "agent-id" :name "test-name" :location '(0 0)))
+	 (clock (new-fixed-clock :init-val 0 :tick-amount 0))
+	 (NS (ns:init))
+	 (tiles (am:uniform-map '(10 10) :kind :grass :climate :sunny))
+	 (U (make-universe :tiles tiles))
+	 (bat (dev:new-battery))
+	 (eng (dev:new-engine :battery bat))
+	 (devices (list bat eng))
+	 (A (agent:init :info info :ns NS :clock clock :devices devices))
+	 (move-cmd (cmd:move-to '(0 9))))
 
-    (agent:start rover)
+    (agent:start A)
+    (agent:submit A move-cmd)
 
-    (agent:submit rover (cmd:move-to '(0 1)))
+    (clock-set clock 5)
+    (agent:dostep A)
+    (is (equalp :running (core:command-state move-cmd)))
+    (is (equalp '(0 5) (agent:location A)))
 
-    ;; Hasn't moved yet
-    (agent:dostep *agent*)
-    (is (equalp (agent:location rover) '(0 0)))
+    (clock-set clock 9)
+    (agent:dostep A)
+    (is (equalp :done (core:command-state move-cmd)))
+    (is (equalp '(0 9) (agent:location A)))
 
-    ;; Now move
-    (clock-set clock 1)
-    (agent:dostep *agent*)
-    (is (equalp (command-state move-cmd) :done))
-    (is (equalp (agent:location rover) '(0 1)))
-
-    (agent:stop rover)))
+    (agent:stop A)))
 
 (run! 'agent-tests)

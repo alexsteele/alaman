@@ -1,13 +1,15 @@
 (defpackage alaman.agent
-  (:use #:cl #:alaman.core #:alaman.time)
+  (:use #:cl #:alaman.time)
   (:import-from :priority-queue)
   (:import-from :alaman.ns)
   (:import-from :alaman.core)
   (:import-from :alaman.command)
+  (:import-from :alaman.device)
   (:import-from :alaman.event)
   (:local-nicknames
    (:core :alaman.core)
    (:cmd :alaman.command)
+   (:dev :alaman.device)
    (:event :alaman.event)
    (:ns :alaman.ns)
    (:pq :priority-queue))
@@ -33,8 +35,8 @@
 
 (defun make-agent-name ()
   (format nil "~a-~a"
-	  (rand-select *agent-name-prefixes*)
-	  (rand-select *agent-name-suffixes*)))
+	  (core:rand-select *agent-name-prefixes*)
+	  (core:rand-select *agent-name-suffixes*)))
 
 (defun make-agent-name-with-suffix ()
   (format nil "~a-~a" (make-agent-name) (random 10000)))
@@ -68,12 +70,12 @@
    (clock
     :initarg :clock
     :reader clock)
+   (devices
+    :initarg :devices
+    :accessor devices)
    (commands
     :initform nil
     :accessor commands)
-   (devices
-    :initform nil
-    :accessor devices)
    (events
     :initform nil
     :accessor events)
@@ -95,12 +97,13 @@
 	  (core:agent-info-name (pinfo agent))
 	  (apply #'format nil args)))
 
-(defun init (&key info ns clock)
+(defun init (&key info ns clock devices)
   "Create a new agent."
   (make-instance 'agent
 		 :info info
 		 :ns ns
-		 :clock clock))
+		 :clock clock
+		 :devices devices))
 
 (defmethod info (agent)
   "Returns a copy of the agent's core:agent-info."
@@ -131,18 +134,19 @@
   (register agent)
   agent)
 
-;; TODO: Record command. Defer planning to next step execution for prioritization.
+;; TODO: Defer planning to dostep for better prioritization?
 (defmethod submit (agent command)
   "Submit a command for execution."
   (plan agent command))
 
 ;; TODO: Return completed commands.
+;; TODO: Step devices.
 (defmethod dostep (agent)
   "Advance the agent to the current clock time. Returns a list of completed commands."
   (dbg agent "step")
   (case (state agent)
     (:active (one-step agent))
-    (:sleeping (one-step agent))
+    (:sleeping (one-step agent)) ;; Continue sleep action
     (:stopped nil)  ;; No-op
     (t (error (format nil "unrecognized state ~a" (state agent)))))
   agent)
@@ -184,14 +188,15 @@
 ;; TODO: Only run actions that can execute within the time slice
 (defmethod run-step (agent)
   (loop while (any-actions agent)
-	do (exec-action agent)))
+	do (exec-next-action agent)))
 
 (defstruct action
+  ;; function to execute. no arguments. return elapsed time.
   (fn nil)
-  (scope nil)
-  (description "")
+  (scope nil)  ;; global | device
+  (description nil)
   (device nil)
-  (priority 99))
+  (priority 99)) ;; lower goes first
 
 (defmethod push-action (agent action)
   (pq:pqueue-push action (action-priority action) (next-actions agent)))
@@ -199,25 +204,34 @@
 (defmethod any-actions (agent)
   (not (pq:pqueue-empty-p (actions agent))))
 
-(defmethod exec-action (agent)
+(defmethod exec-next-action (agent)
   (let ((action (pq:pqueue-pop (actions agent))))
     (funcall (action-fn action))))
 
 (defmethod record (agent event)
   (push event (events agent)))
 
-(defun finish-command (agent cmd)
-  (setf (command-state cmd) :done)
-  (setf (command-end-time cmd) (agent-time agent))
-  (record agent (done-event cmd)))
+(defun finish-command (agent cmd &key (end-time nil))
+  (setf (core:command-state cmd) :done)
+  (setf (core:command-end-time cmd) (or end-time (agent-time agent)))
+  (record agent (event:done-event cmd)))
+
+(defun find-dev (agent kind)
+  (loop for dev in (devices agent)
+	if (equalp (dev:kind dev) kind)
+        return dev))
+
+(defun set-location (agent location)
+  (setf (core:agent-info-location (pinfo agent)) location))
 
 ;; Planning  -------------------------------------------------------------------
 
 (defmethod plan (agent cmd)
-  (case (command-kind cmd)
+  (case (core:command-kind cmd)
     (:no-op (plan-no-op agent cmd))
     (:sleep (plan-sleep agent cmd))
-    (otherwise (error (format nil "unrecognized command kind ~a" command-kind)))))
+    (:move (plan-move agent cmd))
+    (otherwise (error (format nil "unrecognized command kind ~a" (core:command-kind cmd))))))
 
 (defmethod plan-no-op (agent cmd)
   (push-action agent (make-action :fn #'(lambda () (exec-no-op agent cmd))
@@ -229,30 +243,120 @@
 				  :scope :global
 				  :description :sleep)))
 
-;; Actions  -------------------------------------------------------------------
+;; TODO: Routing. Check terrain. Check fuel.
+(defmethod plan-move (agent cmd)
+  (let* ((eng (find-dev agent :engine)))
+    (dbg agent "AAA eng ~a" eng)
+    (when (not eng)
+      (error "no engine"))
+    (push-action agent (make-action :fn #'(lambda () (exec-move agent cmd eng))
+				    :scope :global
+				    :description :move))))
+
+;; -------------------------------------------------------------------
+;; Actions
+;; -------------------------------------------------------------------
+;; Actions are executed by the agent with no arguments. But planning
+;; functions may pass arguments inside a closure. Example:
+;;
+;;  (push-action agent (make-action :fn #'(lambda () (foo arg0 arg1)))
+;;
+;; Actions should return the time they complete execution. This time
+;; must be <= (step-end agent).  To run for more time, an action should
+;; schedule another action with push-action.
 
 (defun exec-no-op (agent cmd)
   (dbg agent "exec-no-op")
-  (finish-command agent cmd))
+  (finish-command agent cmd)
+  (step-start agent))
 
 (defun exec-sleep (agent cmd)
-  (dbg agent "exec-sleep ~a" cmd)
+  (dbg agent "exec-sleep")
   (let* ((sleep-until (cmd:param cmd :until))
-	 (start (step-start agent))
 	 (deadline (step-end agent))
 	 (can-finish (<= sleep-until deadline))
-	 (end (min deadline sleep-until)))
+	 (end-time (min deadline sleep-until)))
     (if can-finish
 	(progn
 	  (set-state agent :active)
 	  (finish-command agent cmd))
 	(progn
 	  (set-state agent :sleeping)
-	  (setf (command-state cmd) :running)
+	  (setf (core:command-state cmd) :running)
 	  (push-action agent (make-action :fn #'(lambda () (exec-sleep agent cmd))
 					  :scope :global
 					  :description :sleep
-					  :priority 0))))))
+					  :priority 0))))
+    end-time))
+
+;; ---------- move ----------
+
+(defun point-x (loc) (car loc))
+(defun point-y (loc) (car (cdr loc)))
+(defun distance (p1 p2)
+  (let* ((dx (- (point-x p1) (point-x p2)))
+	 (dy (- (point-y p1) (point-y p2))))
+    (sqrt (+ (* dx dx) (* dy dy)))))
+(defun point-add (p dp)
+  (list
+   (+ (point-x p) (point-x dp))
+   (+ (point-y p) (point-y dp))))
+
+;; TODO: f=ma?
+(defun calc-speed (agent eng)
+  (declare (ignore agent))
+  (/ (dev:thrust eng) (dev:max-thrust eng)))
+
+;; Moves `agent` in a straight line towards point `dst` using engine `eng`
+;; Returns the end-time of the move
+(defun move-step (agent dst eng)
+  (let* ((src (location agent))
+	 ;; How far do we need to go?
+	 (dist (distance src dst))
+	 (x-dist (abs (- (point-x src) (point-x dst))))
+	 (y-dist (abs (- (point-y src) (point-y dst))))
+	 (x-ratio (/ x-dist dist))
+	 (y-ratio (- 1 x-ratio))
+	 ;; How far can we go this step and how long will it take?
+	 (speed (calc-speed agent eng))
+	 (step-time (- (step-end agent) (step-start agent)))
+	 (step-dist (min dist (* speed step-time)))
+	 (step-x (* x-ratio step-dist))
+	 (step-y (* y-ratio step-dist))
+	 (dp (list step-x step-y))
+	 (end-location (point-add src dp))
+	 (time-taken (/ step-dist speed))
+	 (end-time (+ (step-start agent) time-taken)))
+    (dbg agent
+	 "move-step: start-location=~a speed=~a end-location=~a destination=~a time-taken=~a"
+	 src speed end-location dst time-taken)
+    (set-location agent end-location)
+    end-time))
+
+(defun exec-move (agent cmd eng)
+  (dbg agent "exec-move")
+  (let* ((src (location agent))
+	 (dst (cmd:param cmd :location))
+	 (end-time (step-start agent))
+	 (end-location src))
+
+    ;; Move if needed
+    (when (not (equalp src dst))
+      (setf (core:command-state cmd) :running)
+      (dev:govern eng 1.0)
+      (setf end-time (move-step agent dst eng))
+      (setf end-location (location agent)))
+
+    ;; Did we make it?
+    (if (equalp end-location dst)
+	(progn
+	  (dev:govern eng 0.0)
+	  (finish-command agent cmd :end-time end-time))
+	(progn
+	  (push-action agent (make-action :fn #'(lambda () (exec-move agent cmd eng))
+					  :scope :global
+					  :description :move))))
+    end-time))
 
 ;; Agent Blueprints ------------------------------------------------------------
 

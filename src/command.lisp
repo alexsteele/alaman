@@ -3,7 +3,9 @@
   (:export #:no-op
 	   #:move-to
 	   #:sleep-until
-	   #:param))
+	   #:state
+	   #:param
+	   #:cvar))
 (in-package :alaman.command)
 
 (defun no-op ()
