@@ -71,8 +71,8 @@
   sim)
 
 (defun dostep (sim)
+  (print "sim: dostep")
   (let ((clock (sim-clock sim)))
-    (format t "AAA ~a" clock)
     (clock-tick clock)
     (clock-pin clock)
     (admin:dostep (sim-admin sim))
