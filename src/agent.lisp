@@ -22,7 +22,7 @@
 	   #:start
 	   #:stop
 	   #:submit
-	   #:dostep
+	   #:run-step
 	   ;; Blueprints
 	   #:new-rover))
 
@@ -134,14 +134,14 @@
   (register agent)
   agent)
 
-;; TODO: Defer planning to dostep for better prioritization?
+;; TODO: Defer planning to run-step for better prioritization?
 (defmethod submit (agent command)
   "Submit a command for execution."
   (plan agent command))
 
 ;; TODO: Return completed commands.
 ;; TODO: Step devices.
-(defmethod dostep (agent)
+(defmethod run-step (agent)
   "Advance the agent to the current clock time. Returns a list of completed commands."
   (dbg agent "step")
   (case (state agent)
@@ -174,7 +174,7 @@
 
 (defmethod one-step (agent)
   (start-step agent)
-  (run-step agent))
+  (exec-step agent))
 
 (defmethod start-step (agent)
   (setf (step-start agent) (step-end agent))
@@ -186,7 +186,7 @@
   (setf (next-actions agent) (pq:make-pqueue #'equalp)))
 
 ;; TODO: Only run actions that can execute within the time slice
-(defmethod run-step (agent)
+(defmethod exec-step (agent)
   (loop while (any-actions agent)
 	do (exec-next-action agent)))
 

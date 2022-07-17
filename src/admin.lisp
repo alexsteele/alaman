@@ -7,7 +7,7 @@
 		    (:ns :alaman.ns))
   (:export #:init
 	   #:start
-	   #:dostep
+	   #:run-step
 	   #:stop
 	   #:list-agents))
 (in-package :alaman.admin)
@@ -46,7 +46,7 @@
 	     (agents (admin-agents admin)))
 	(setf (gethash id agents) info)))))
 
-(defun dostep (admin)
+(defun run-step (admin)
   nil)
 
 (defun stop (admin)

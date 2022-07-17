@@ -23,8 +23,8 @@
 
 (test sim-lifecycle
   (sim:start *sim*)
-  (sim:dostep *sim*)
-  (sim:dostep *sim*)
+  (sim:run-step *sim*)
+  (sim:run-step *sim*)
   (sim:stop *sim*))
 
 (run! 'sim-tests)

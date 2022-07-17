@@ -15,7 +15,7 @@
     :initarg :location
     :accessor location)))
 
-(defmethod dostep ((dev device) elapsed-sec)
+(defmethod run-step ((dev device) elapsed-sec)
   "Advance the device state by elapsed-sec."
   dev)
 
@@ -47,7 +47,7 @@
   (assert (>= (level battery) n))
   (decf (level battery) n))
 
-(defmethod dostep ((b battery) elapsed-sec)
+(defmethod run-step ((b battery) elapsed-sec)
   (consume b (float (* (drain-rate b) elapsed-sec)))
   b)
 
@@ -84,7 +84,7 @@
 	 (climate (core:tile-climate tile)))
     (equalp :sunny climate)))
 
-(defmethod dostep ((panel solar-panel) elapsed-sec)
+(defmethod run-step ((panel solar-panel) elapsed-sec)
   (when (and (battery panel) (sunnyp panel))
     (replenish (battery panel) (float (* (fill-rate panel) elapsed-sec))))
   panel)
@@ -120,7 +120,7 @@
 			 :max-drain-rate max-drain-rate
 			 :max-thrust max-thrust))
 
-(defmethod dostep ((eng engine) elapsed-sec)
+(defmethod run-step ((eng engine) elapsed-sec)
   (let* ((B (battery eng))
 	 (R (* (max-drain-rate eng) (output eng)))
 	 (N (* R elapsed-sec))

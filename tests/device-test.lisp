@@ -32,18 +32,18 @@
     (is (null (dev:battery panel)))
     (dev:detach panel) ; no-op
 
-    (dev:dostep panel 10)
+    (dev:run-step panel 10)
 
     (dev:attach panel bat)
     (dev:consume bat 50)
 
     ; sunny? replenish battery
-    (dev:dostep panel 10)
+    (dev:run-step panel 10)
     (is (equalp 60.0 (dev:level bat)))
 
     ; cloudy? no change
     (am:fill-tiles tiles :climate :cloudy)
-    (dev:dostep panel 10)
+    (dev:run-step panel 10)
     (is (equalp 60.0 (dev:level bat)))))
 
 (test engine-test
@@ -55,25 +55,25 @@
 
     ;; No output
     (dev:govern eng 0.0)
-    (dev:dostep eng 1.0)
+    (dev:run-step eng 1.0)
     (is (= (dev:thrust eng) 0.0))
     (is (= (dev:level bat) 100.0))
 
     ;; Max output
     (dev:govern eng 1.0)
     (is (= (dev:thrust eng) 100.0))
-    (dev:dostep eng 1.0)
+    (dev:run-step eng 1.0)
     (is (= (dev:level bat) 99.0))
-    (dev:dostep eng 9.0)
+    (dev:run-step eng 9.0)
     (is (= (dev:level bat) 90.0))
 
     ;; Consume entire battery. Output should be adjusted.
-    (dev:dostep eng 100.0)
+    (dev:run-step eng 100.0)
     (is (= (dev:output eng) 0.9)) ; elapsed-sec / battery level
     (is (= (dev:thrust eng) 90.0)) ; .9 * max-thrust
 
     ;; One more step.
-    (dev:dostep eng 1.0)
+    (dev:run-step eng 1.0)
     (is (= (dev:output eng) 0.0))
     (is (= (dev:thrust eng) 0.0))))
 

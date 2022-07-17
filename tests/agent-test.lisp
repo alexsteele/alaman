@@ -39,14 +39,14 @@
       (is (equal :stopped (agent:state A)))
       (is (equal :stopped (agent-info-state (ns:lookup NS "/agent/agent-name"))))))
 
-(test dostep-no-commands
+(test run-step-no-commands
   (let* ((info (make-agent-info :id "agent-id" :name "name"))
 	 (clock (new-fixed-clock :init-val 0 :tick-amount 0))
 	 (NS (ns:init))
 	 (A (agent:init :info info :ns NS :clock clock)))
     (agent:start A)
     (clock-set clock 10)
-    (agent:dostep A)
+    (agent:run-step A)
     (agent:stop A)))
 
 ;; command tests
@@ -60,7 +60,7 @@
     (agent:start A)
     (agent:submit A no-op)
     (clock-set clock 10)
-    (agent:dostep A)
+    (agent:run-step A)
 
     (is (equalp :done (cmd:state no-op)))
 
@@ -79,13 +79,13 @@
 
     ;; Step to T=10
     (clock-set clock 10)
-    (agent:dostep A)
+    (agent:run-step A)
     (is (equalp :running (core:command-state sleep-cmd)))
     (is (equalp :sleeping (agent:state A)))
 
     ;; Step to T=20. Finish.
     (clock-set clock 20)
-    (agent:dostep A)
+    (agent:run-step A)
     (is (equalp :done (core:command-state sleep-cmd)))
     (is (equalp :active (agent:state A)))
 
@@ -107,12 +107,12 @@
     (agent:submit A move-cmd)
 
     (clock-set clock 5)
-    (agent:dostep A)
+    (agent:run-step A)
     (is (equalp :running (core:command-state move-cmd)))
     (is (equalp '(0 5) (agent:location A)))
 
     (clock-set clock 9)
-    (agent:dostep A)
+    (agent:run-step A)
     (is (equalp :done (core:command-state move-cmd)))
     (is (equalp '(0 9) (agent:location A)))
 

@@ -16,7 +16,7 @@
 	   #:init
 	   #:start
 	   #:run
-	   #:dostep
+	   #:run-step
 	   #:stop
 	   #:save
 	   #:load-from))
@@ -70,14 +70,14 @@
     (agent:start agent))
   sim)
 
-(defun dostep (sim)
-  (print "sim: dostep")
+(defun run-step (sim)
+  (print "sim: run-step")
   (let ((clock (sim-clock sim)))
     (clock-tick clock)
     (clock-pin clock)
-    (admin:dostep (sim-admin sim))
+    (admin:run-step (sim-admin sim))
     (dolist (agent (sim-agents sim))
-      (agent:dostep agent))
+      (agent:run-step agent))
     (clock-unpin clock))
   sim)
 
