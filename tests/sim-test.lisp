@@ -3,11 +3,13 @@
   (:import-from :alaman.sim)
   (:import-from :alaman.core)
   (:import-from :alaman.ns)
+  (:import-from :alaman.map)
   (:local-nicknames
    (:admin :alaman.admin)
    (:core :alaman.core)
    (:ns :alaman.ns)
-   (:sim :alaman.sim))
+   (:sim :alaman.sim)
+   (:am :alaman.map))
   (:use :cl :fiveam :alaman.core))
 (in-package :alaman/tests/admin)
 
@@ -16,9 +18,7 @@
 
 (in-suite sim-tests)
 
-(defvar *ns* (ns:init))
-(defvar *clock* (new-system-clock))
-(defvar *spec* (sim:rand-spec))
+(defvar *spec* (core:make-spec))
 (defvar *sim* (sim:init *spec*))
 
 (test sim-lifecycle

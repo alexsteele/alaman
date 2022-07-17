@@ -12,7 +12,7 @@
    (:ns :alaman.ns)
    (:am :alaman.map)
    (:time :alaman.time))
-  (:export #:rand-spec
+  (:export #:make-sim
 	   #:init
 	   #:start
 	   #:run
@@ -22,47 +22,41 @@
 	   #:load-from))
 (in-package :alaman.sim)
 
-(defun make-agents (count clock nameserver)
-  (let ((names (agent:make-agent-names count)))
-    (loop for name in names
-	  collect (agent:init :info (make-agent-info :id (new-id) :name name)
-			      :clock clock
-			      :ns nameserver))))
-
-(defun new-universe ()
-  (let ((dims '(100 100)))
-    (make-universe :dims dims
-		   :tiles (am:uniform-map dims))))
-
-(defun rand-spec ()
-  "Creates a randomized core:spec."
-  (let* ((nameserver (ns:init))
-	 (clock (new-system-clock)))
-    (make-spec
-     :clock clock
-     :nameserver nameserver
-     :universe (new-universe)
-     :admin (admin:init :folder nil
-			:ns nameserver
-			:clock clock)
-     :agents (make-agents 3 clock nameserver))))
-
 (defstruct sim
   "Simulation state."
-  (id "")
+  (id nil)
   (spec nil)
   (universe nil)
   (clock nil)
+  (nameserver nil)
   (admin nil)
   (agents nil))
 
 (defun init (spec)
-  (make-sim :id (new-id)
-	    :spec spec
-	    :universe (spec-universe spec)
-	    :clock (spec-clock spec)
-	    :admin (spec-admin spec)
-	    :agents (spec-agents spec)))
+  (let* ((clock (new-system-clock))
+	 (nameserver (ns:init))
+	 (num-agents (core:rand-range-incl (spec-min-agents spec)
+					   (spec-max-agents spec))))
+    (make-sim
+     :id (new-id)
+     :spec spec
+     :clock clock
+     :nameserver nameserver
+     :universe (create-universe)
+     :admin (admin:init :folder nil :ns nameserver :clock clock)
+     :agents (create-agents num-agents clock nameserver))))
+
+(defun create-universe ()
+  (let ((dims '(100 100)))
+    (make-universe :dims dims :tiles (am:uniform-map dims))))
+
+(defun create-agents (count clock nameserver)
+  (let ((names (agent:make-agent-names count)))
+    (loop for name in names
+	  collect (agent:init
+		   :info (make-agent-info :id (new-id) :name name)
+		   :clock clock
+		   :ns nameserver))))
 
 (defun start (sim)
   (admin:start (sim-admin sim))
@@ -87,9 +81,11 @@
     (agent:stop agent))
   sim)
 
-(defun spawn-agent (sim &optional agent) "Spawn an agent" nil)
 (defun submit (sim command) nil)
+
+(defun spawn-agent (sim &optional agent) "Spawn an agent" nil)
 (defun exec (sim command) nil)
 (defun pprint-sim (sim) nil)
 (defun save (sim &optional path) nil)
 (defun load-from (path) nil)
+(defun render-html (sim) nil)

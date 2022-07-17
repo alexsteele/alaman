@@ -2,18 +2,14 @@
   (:use #:cl))
 (in-package :alaman.core)
 
-;; TODO: I'd like this to be more of a specification and less a set of exact parameters.
-;; Think: min/max agents, map style, etc.
 (defstruct spec
   "Simulation specification."
-  (name nil)
+  (name "")
   (folder nil)
-  (rng nil)
-  (universe nil)
-  (admin nil)
-  (agents nil)
-  (nameserver nil)
-  (clock nil))
+  (seed nil)
+  (min-agents 0)
+  (max-agents 3)
+  (clock-speed 1))
 
 (defstruct universe
   "A map of the universe."
@@ -105,6 +101,13 @@
 
 (defun rand-select (seq)
   (elt seq (random (length seq))))
+
+(defun rand-range (min max)
+  (assert (< min max))
+  (+ min (random (- max min))))
+
+(defun rand-range-incl (min max)
+  (rand-range min (+ 1 max)))
 
 (defun export-all (pkg)
   (let ((pack (find-package pkg)))
