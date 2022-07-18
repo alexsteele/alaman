@@ -87,9 +87,8 @@
 (defun submit (sim command)
   (admin:submit command))
 
+
 (defun spawn-agent (sim &optional agent) "Spawn an agent" nil)
-(defun exec (sim command) nil)
-(defun pprint-sim (sim) nil)
 (defun save (sim &optional path) nil)
 (defun load-from (path) nil)
 

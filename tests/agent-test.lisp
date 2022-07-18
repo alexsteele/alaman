@@ -95,7 +95,7 @@
   (let* ((info (make-agent-info :id "agent-id" :name "test-name" :location '(0 0)))
 	 (clock (new-fixed-clock :init-val 0 :tick-amount 0))
 	 (NS (ns:init))
-	 (tiles (am:uniform-map '(10 10) :kind :grass :climate :sunny))
+	 (tiles (am:uniform-map '(10 10) :kind :grass :weather :sunny))
 	 (U (make-universe :tiles tiles))
 	 (bat (dev:new-battery))
 	 (eng (dev:new-engine :battery bat))

@@ -81,8 +81,8 @@
   (let* ((uni (universe panel))
 	 (loc (location panel))
 	 (tile (core:tile-at-loc uni loc))
-	 (climate (core:tile-climate tile)))
-    (equalp :sunny climate)))
+	 (weather (core:tile-weather tile)))
+    (equalp :sunny weather)))
 
 (defmethod run-step ((panel solar-panel) elapsed-sec)
   (when (and (battery panel) (sunnyp panel))

@@ -13,7 +13,7 @@
 (in-package alaman.map)
 
 (defvar *all-tile-kinds* '(water grass wheat rock))
-(defvar *all-climates* '(:sunny :cloudy :rainy))
+(defvar *all-weathers* '(:sunny :cloudy :rainy))
 
 (defun water ()
   (make-tile :kind :water))
@@ -32,13 +32,13 @@
     (setf (row-major-aref m i) (funcall fn)))
   m)
 
-(defun fill-tiles (m &key (kind :grass) (climate :sunny))
+(defun fill-tiles (m &key (kind :grass) (weather :sunny))
   (fill-map m #'(lambda () (make-tile :kind kind
-				      :climate climate))))
+				      :weather weather))))
 
-(defun uniform-map (dimensions &key (kind :grass) (climate :sunny))
+(defun uniform-map (dimensions &key (kind :grass) (weather :sunny))
   (fill-tiles (make-array dimensions) :kind kind
-				      :climate climate))
+				      :weather weather))
 
 (defun map-array (m fn)
   (let ((result (make-array (array-dimensions m))))

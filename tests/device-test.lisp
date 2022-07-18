@@ -22,7 +22,7 @@
     (is (= 100 (dev:level bat)))))
 
 (test solar-panel-test
-  (let* ((tiles (am:uniform-map '(1 1) :climate :sunny))
+  (let* ((tiles (am:uniform-map '(1 1) :weather :sunny))
 	 (U (make-universe :tiles tiles))
 	 (panel (dev:new-solar-panel :location '(0 0)
 				     :universe U
@@ -42,7 +42,7 @@
     (is (equalp 60.0 (dev:level bat)))
 
     ; cloudy? no change
-    (am:fill-tiles tiles :climate :cloudy)
+    (am:fill-tiles tiles :weather :cloudy)
     (dev:run-step panel 10)
     (is (equalp 60.0 (dev:level bat)))))
 
