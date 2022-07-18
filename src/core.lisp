@@ -7,6 +7,7 @@
   (name "")
   (folder nil)
   (seed nil)
+  (dims '(100 100))
   (min-agents 0)
   (max-agents 3)
   (clock-speed 1))

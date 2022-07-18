@@ -5,18 +5,21 @@
   (:import-from :alaman.ns)
   (:import-from :alaman.map)
   (:import-from :alaman.time)
+  (:import-from :spinneret)
   (:local-nicknames
    (:admin :alaman.admin)
    (:agent :alaman.agent)
    (:core :alaman.core)
    (:ns :alaman.ns)
    (:am :alaman.map)
-   (:time :alaman.time))
+   (:time :alaman.time)
+   (:sp :spinneret))
   (:export #:make-sim
 	   #:init
 	   #:start
 	   #:run
 	   #:run-step
+	   #:submit
 	   #:stop
 	   #:save
 	   #:load-from))
@@ -32,7 +35,7 @@
   (admin nil)
   (agents nil))
 
-(defun init (spec)
+(defun init (&optional (spec (core:make-spec)))
   (let* ((clock (new-system-clock))
 	 (nameserver (ns:init))
 	 (num-agents (core:rand-range-incl (spec-min-agents spec)
@@ -42,13 +45,13 @@
      :spec spec
      :clock clock
      :nameserver nameserver
-     :universe (create-universe)
+     :universe (create-universe spec)
      :admin (admin:init :folder nil :ns nameserver :clock clock)
      :agents (create-agents num-agents clock nameserver))))
 
-(defun create-universe ()
-  (let ((dims '(100 100)))
-    (make-universe :dims dims :tiles (am:uniform-map dims))))
+(defun create-universe (spec)
+  (make-universe :dims (core:spec-dims spec)
+		 :tiles (am:uniform-map (core:spec-dims spec))))
 
 (defun create-agents (count clock nameserver)
   (let ((names (agent:make-agent-names count)))
@@ -89,4 +92,31 @@
 (defun pprint-sim (sim) nil)
 (defun save (sim &optional path) nil)
 (defun load-from (path) nil)
-(defun render-html (sim) nil)
+
+(defun tiles (sim)
+  (core:universe-tiles (sim-universe sim)))
+
+(defvar *html-style* "
+.tile { width: 20px; height: 20px; }
+.wheat { background: yellow; }
+.grass { background: green; }
+.rock { background: grey; }
+.water { background: blue; }
+")
+
+(defun render-html (sim)
+  (sp:with-html
+    (:html
+     (:head
+      (:title "alaman")
+      (:style *html-style*))
+     (:body
+      (:h1 "alaman")
+      (:h2 "map")
+      (am:render-html (tiles sim))
+      (:h2 "admin")
+      (:h2 "agents")))))
+
+(defun render-html-string (sim)
+  (let ((sp:*html-style* :human))
+    (sp:with-html-string (render-html sim))))

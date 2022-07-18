@@ -1,5 +1,3 @@
-* Eliminate :local-nicknames
-* Map generation
-* Add simple commands
-* Hook up sim
-* Admin UI
+* UI: map viewer, step, submit command
+* Gather command
+* Resource regeneration

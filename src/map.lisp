@@ -8,7 +8,8 @@
 	   #:uniform-map
 	   #:fill-tiles
 	   #:init-from-tile-kinds
-	   #:tile-kinds))
+	   #:tile-kinds
+	   #:render-html))
 (in-package alaman.map)
 
 (defvar *all-tile-kinds* '(water grass wheat rock))
@@ -62,12 +63,12 @@
      (dotimes (row rows)
        (:tr (dotimes (col cols)
 	      (let ((tile (aref tiles row col)))
-		(:td :class (tile-class tile))))))))))
+		(:td :class (tile-html-class tile))))))))))
 
-(defun tile-class (tile)
+(defun tile-html-class (tile)
   (case (core:tile-kind tile)
-    (:wheat "wheat")
-    (:grass "grass")
-    (:water "water")
-    (:rock "rock")
+    (:wheat "wheat tile")
+    (:grass "grass tile")
+    (:water "water tile")
+    (:rock "rock tile")
     (t (error "unrecognized tile kind"))))
