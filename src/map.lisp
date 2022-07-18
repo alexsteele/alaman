@@ -1,5 +1,9 @@
 (defpackage alaman.map
   (:use #:cl #:alaman.core)
+  (:import-from :spinneret)
+  (:local-nicknames
+   (:core :alaman.core)
+   (:sp :spinneret))
   (:export #:generate-map
 	   #:uniform-map
 	   #:fill-tiles
@@ -47,3 +51,23 @@
 
 (defun tile-kinds (m)
   (map-array m #'tile-kind))
+
+(defun render-html (tiles)
+  ;; TODO: Consider adding an on-hover so you can see the contents of a tile.
+  (let* ((dims (array-dimensions tiles))
+	 (rows (first dims))
+	 (cols (second dims)))
+  (sp:with-html
+    (:table
+     (dotimes (row rows)
+       (:tr (dotimes (col cols)
+	      (let ((tile (aref tiles row col)))
+		(:td :class (tile-class tile))))))))))
+
+(defun tile-class (tile)
+  (case (core:tile-kind tile)
+    (:wheat "wheat")
+    (:grass "grass")
+    (:water "water")
+    (:rock "rock")
+    (t (error "unrecognized tile kind"))))
