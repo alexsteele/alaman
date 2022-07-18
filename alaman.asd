@@ -8,7 +8,7 @@
   :depends-on (:alexandria :uiop :priority-queue :spinneret)
   :pathname "src/"
   :components
-  ((:file "admin" :depends-on ("core" "time" "ns"))
+  ((:file "admin" :depends-on ("agent" "core" "time" "ns"))
    (:file "agent" :depends-on ("core" "command" "device" "event" "time" "ns"))
    (:file "core")
    (:file "command" :depends-on ("core"))

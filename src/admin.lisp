@@ -1,14 +1,18 @@
 (defpackage alaman.admin
   (:use #:cl)
+  (:import-from #:alaman.agent)
   (:import-from #:alaman.core)
   (:import-from #:alaman.ns)
   (:import-from #:alexandria :hash-table-values)
-  (:local-nicknames (:core :alaman.core)
-		    (:ns :alaman.ns))
+  (:local-nicknames
+   (:agent :alaman.agent)
+   (:core :alaman.core)
+   (:ns :alaman.ns))
   (:export #:init
 	   #:start
 	   #:run-step
 	   #:stop
+	   #:submit
 	   #:list-agents))
 (in-package :alaman.admin)
 
@@ -19,7 +23,7 @@
   (clock nil)
   (agents (make-hash-table :test #'equal))
   (devices (make-hash-table :test #'equal))
-  (command-queue nil)
+  (commands nil)
   (events nil))
 
 (defun dbg (admin &rest args)
@@ -61,8 +65,15 @@
 (defun list-agents (admin)
   (hash-table-values (admin-agents admin)))
 
-(defun submit (command)
-  nil)
+(defun submit (admin command)
+  (let* ((agent-id (core:command-agent-id command))
+	 (agent (gethash agent-id (admin-agents admin))))
+    (if agent-id
+	(agent:submit agent command)
+	(plan admin command))))
+
+(defun plan (admin command)
+  (push command (admin-commands admin)))
 
 (defun cancel (command-id)
   nil)

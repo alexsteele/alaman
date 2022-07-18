@@ -81,7 +81,8 @@
     (agent:stop agent))
   sim)
 
-(defun submit (sim command) nil)
+(defun submit (sim command)
+  (admin:submit command))
 
 (defun spawn-agent (sim &optional agent) "Spawn an agent" nil)
 (defun exec (sim command) nil)
