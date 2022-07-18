@@ -35,6 +35,7 @@
     (sim:start S)
     (sim:submit S C)
     (sim:run-step S)
+    (is (equalp :done (core:cmd-state C)))
     (sim:stop S)))
 
 (run! 'sim-tests)

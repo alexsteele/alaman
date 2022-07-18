@@ -137,6 +137,7 @@
 ;; TODO: Defer planning to run-step for better prioritization?
 (defmethod submit (agent command)
   "Submit a command for execution."
+  (setf (core:cmd-agent-id command) (core:agent-info-id (pinfo agent)))
   (plan agent command))
 
 ;; TODO: Return completed commands.

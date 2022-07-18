@@ -3,7 +3,7 @@
   (:import-from #:alaman.agent)
   (:import-from #:alaman.core)
   (:import-from #:alaman.ns)
-  (:import-from #:alexandria :hash-table-values)
+  (:import-from #:alexandria :hash-table-values :random-elt)
   (:local-nicknames
    (:agent :alaman.agent)
    (:core :alaman.core)
@@ -73,7 +73,8 @@
 	(plan admin command))))
 
 (defun plan (admin command)
-  (push command (admin-commands admin)))
+  (agent:submit (random-elt (hash-table-values (admin-agents admin)))
+		command))
 
 (defun cancel (command-id)
   nil)
