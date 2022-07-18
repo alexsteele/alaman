@@ -16,16 +16,27 @@
 (defvar *all-weathers* '(:sunny :cloudy :rainy))
 
 (defun water ()
-  (make-tile :kind :water))
+  (make-tile :kind :water
+	     :entities '((water quantity 10))))
 
 (defun grass ()
   (make-tile :kind :grass))
 
 (defun wheat ()
-  (make-tile :kind :wheat))
+  (make-tile :kind :wheat
+	     :entities '((wheat quantity 10))))
 
 (defun rock ()
-  (make-tile :kind :rock))
+  (make-tile :kind :rock
+	     :entities '((rock quantity 10))))
+
+(defun make-tile-kind (kind)
+  (case kind
+    (:water (water))
+    (:grass (grass))
+    (:wheat (wheat))
+    (:rock (rock))
+    (t (error "unrecognized tile kind"))))
 
 (defun fill-map (m fn)
   (dotimes (i (array-total-size m))
