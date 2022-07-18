@@ -66,7 +66,7 @@
   (settings nil)
   (vars nil))
 
-(defstruct command
+(defstruct (command (:conc-name cmd-))
   "A command to be performed by an agent."
   (id "")
   (agent-id "")
