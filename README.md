@@ -45,12 +45,11 @@ Alaman is written in common lisp and using the asdf packaging system.
 2. Start an sbcl repl or SLIME emacs session.
 3. Load the system with `(asdf:load-system "alaman")`
 
-## Examples
+## Example
 
 ```lisp
 ;; Create a simulation
-(defvar *spec* (core:make-spec :clock-speed 1 :max-agents 10))
-(defvar S (sim:init *spec*))
+(defvar S (sim:init))
 (sim:start S)
 
 ;; Execute a single step
