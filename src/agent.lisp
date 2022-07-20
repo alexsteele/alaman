@@ -175,12 +175,16 @@
 
 (defmethod one-step (agent)
   (start-step agent)
-  (exec-step agent))
+  (exec-step agent)
+  (step-devices agent))
 
 (defmethod start-step (agent)
   (setf (step-start agent) (step-end agent))
   (setf (step-end agent) (agent-time agent))
   (rotate-actions agent))
+
+(defmethod step-duration (agent)
+  (- (step-end agent) (step-start agent)))
 
 (defmethod rotate-actions (agent)
   (setf (actions agent) (next-actions agent))
@@ -190,6 +194,11 @@
 (defmethod exec-step (agent)
   (loop while (any-actions agent)
 	do (exec-next-action agent)))
+
+(defmethod step-devices (agent)
+  (let ((elapsed-time (step-duration agent)))
+    (dolist (device (devices agent))
+      (dev:run-step device elapsed-time))))
 
 (defstruct action
   ;; function to execute. no arguments. return elapsed time.

@@ -49,6 +49,30 @@
     (agent:run-step A)
     (agent:stop A)))
 
+(test run-step-steps-devices
+  (let* ((info (make-agent-info :id "agent-id" :name "name"))
+	 (clock (new-fixed-clock :init-val 0 :tick-amount 0))
+	 (NS (ns:init))
+	 (b1 (dev:new-battery :capacity 10 :drain-rate 1))
+	 (b2 (dev:new-battery :capacity 10 :drain-rate 2))
+	 (devices (list b1 b2))
+	 (A (agent:init :info info :ns NS :clock clock :devices devices)))
+    (agent:start A)
+
+    ;; Advance 1
+    (clock-set clock 1)
+    (agent:run-step A)
+    (is (equalp 9 (dev:level b1)))
+    (is (equalp 8 (dev:level b2)))
+
+    ;; Advance 2
+    (clock-set clock 3)
+    (agent:run-step A)
+    (is (equalp 7 (dev:level b1)))
+    (is (equalp 4 (dev:level b2)))
+
+    (agent:stop A)))
+
 ;; command tests
 
 (test no-op-command

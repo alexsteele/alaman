@@ -33,10 +33,12 @@
     :initarg :drain-rate ; per second
     :reader drain-rate)))
 
-(defun new-battery (&key (info (core:make-device-info)) (drain-rate 0.0))
+(defun new-battery (&key (info (core:make-device-info :kind :battery))
+		      (capacity 100)
+		      (drain-rate 0.0))
   (make-instance 'battery :info info
-			  :capacity 100
-			  :level 100
+			  :capacity capacity
+			  :level capacity
 			  :drain-rate drain-rate))
 
 (defmethod replenish (battery n)
