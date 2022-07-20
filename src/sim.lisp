@@ -35,26 +35,30 @@
   (admin nil)
   (agents nil))
 
-(defun init (&optional (spec (core:make-spec)))
-  (let* ((clock (new-system-clock))
-	 (nameserver (ns:init))
-	 (num-agents (core:rand-range-incl (spec-min-agents spec)
-					   (spec-max-agents spec))))
-    (make-sim
-     :id (new-id)
-     :spec spec
-     :clock clock
-     :nameserver nameserver
-     :universe (create-universe spec)
-     :admin (admin:init :folder nil :ns nameserver :clock clock)
-     :agents (create-agents num-agents clock nameserver))))
+(defun init (&optional (spec (core:make-spec))
+	     &key (clock (new-system-clock))
+	       (nameserver (ns:init))
+	       (universe (create-universe spec))
+	       (admin (admin:init :folder nil :ns nameserver :clock clock))
+	       (agents nil))
+  (make-sim
+   :id (new-id)
+   :spec spec
+   :clock clock
+   :nameserver nameserver
+   :universe universe
+   :admin admin
+   :agents (or agents (create-agents spec clock nameserver))))
 
 (defun create-universe (spec)
   (make-universe :dims (core:spec-dims spec)
 		 :tiles (am:uniform-map (core:spec-dims spec))))
 
-(defun create-agents (count clock nameserver)
-  (let ((names (agent:make-agent-names count)))
+(defun create-agents (spec clock nameserver)
+  (let* ((count (core:rand-range-incl (spec-min-agents spec)
+				      (spec-max-agents spec)))
+	 (names (agent:make-agent-names count)))
+    (assert (>= count 0))
     (loop for name in names
 	  collect (agent:init
 		   :info (make-agent-info :id (new-id) :name name)

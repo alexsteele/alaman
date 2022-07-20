@@ -1,5 +1,7 @@
-(defpackage alaman/tests/admin
+(defpackage alaman/tests/sim
   (:use #:alaman.time)
+  (:import-from :alaman.admin)
+  (:import-from :alaman.agent)
   (:import-from :alaman.sim)
   (:import-from :alaman.core)
   (:import-from :alaman.command)
@@ -7,6 +9,7 @@
   (:import-from :alaman.map)
   (:local-nicknames
    (:admin :alaman.admin)
+   (:agent :alaman.agent)
    (:core :alaman.core)
    (:cmd :alaman.command)
    (:ns :alaman.ns)
@@ -20,14 +23,22 @@
 
 (in-suite sim-tests)
 
-(defvar *spec* (core:make-spec))
-(defvar *sim* (sim:init *spec*))
+(test sim-default-lifecycle
+  (let ((S (sim:init)))
+    (sim:start S)
+    (sim:run-step S)
+    (sim:run-step S)
+    (sim:stop S)))
 
-(test sim-lifecycle
-  (sim:start *sim*)
-  (sim:run-step *sim*)
-  (sim:run-step *sim*)
-  (sim:stop *sim*))
+(test sim-init-args
+  (let ((spec (core:make-spec :dims '(10 10)))
+	(clock (new-fixed-clock))
+	(nameserv (ns:init))
+	(agents (list (agent:init :clock clock :ns nameserv)))
+	(S (sim:init spec :agents agents)))
+    (sim:start S)
+    (sim:run-step S)
+    (sim:stop S)))
 
 (test sim-no-op
   (let ((S (sim:init (core:make-spec)))
