@@ -3,9 +3,11 @@
   (:export #:no-op
 	   #:move-to
 	   #:sleep-until
+	   #:explore
 	   #:state
 	   #:param
-	   #:cvar))
+	   #:cvar
+	   #:donep))
 (in-package :alaman.command)
 
 (defun no-op ()
@@ -40,3 +42,6 @@
 
 (defun cvar (cmd name)
   (cdr (assoc name (command-vars cmd))))
+
+(defun donep (cmd)
+  (equalp :done (state cmd)))
