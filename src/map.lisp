@@ -70,6 +70,15 @@
     (:rock (rock-tile))
     (t (error "unrecognized tile kind"))))
 
+(defun rainyp (tile)
+  (equalp (tile-weather tile) :rainy))
+
+(defun sunnyp (tile)
+  (equalp (tile-weather tile) :sunny))
+
+(defun cloudyp (tile)
+  (equalp (tile-weather tile) :cloudy))
+
 ;;; Map
 
 (defun fill-map (m fn)
