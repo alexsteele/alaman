@@ -21,6 +21,8 @@
 (defvar *all-tile-kinds* '(water grass wheat rock))
 (defvar *all-weathers* '(:sunny :cloudy :rainy))
 
+;;; Objects
+
 (defun water (&optional (quantity 1))
   (dict :kind :water :quantity quantity))
 
@@ -41,6 +43,8 @@
 
 (defun iron (&optional (quantity 1))
   (dict :kind :iron :quantity 1))
+
+;;; Tiles
 
 (defun water-tile ()
   (make-tile :kind :water
@@ -65,6 +69,8 @@
     (:wheat (wheat-tile))
     (:rock (rock-tile))
     (t (error "unrecognized tile kind"))))
+
+;;; Map
 
 (defun fill-map (m fn)
   (dotimes (i (array-total-size m))
