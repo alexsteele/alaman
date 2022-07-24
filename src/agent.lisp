@@ -369,5 +369,5 @@
 ;; Agent Blueprints ------------------------------------------------------------
 
 ;; TODO: Implement
-(defun new-rover (&key info clock ns universe location max-speed)
+(defun new-rover (&key info clock ns world location max-speed)
   nil)

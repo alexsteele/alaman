@@ -23,9 +23,9 @@
 
 (test solar-panel-test
   (let* ((tiles (am:uniform-map '(1 1) :weather :sunny))
-	 (U (make-universe :tiles tiles))
+	 (U (make-world :tiles tiles))
 	 (panel (dev:new-solar-panel :location '(0 0)
-				     :universe U
+				     :world U
 				     :fill-rate 1.0))
 	 (bat (dev:new-battery)))
 

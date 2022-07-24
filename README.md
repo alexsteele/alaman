@@ -4,11 +4,11 @@ Alaman agent simulation
 
 ## Overview
 
-Alaman simulates **agents** acting in a **universe**. It includes:
+Alaman simulates **agents** acting in a **world**. It includes:
 
-* A **universe** consisting of a 2-D map populated by **objects** and **agents**
+* A **world** consisting of a 2-D map populated by **objects** and **agents**
 * An **admin** that manages and directs agents by issuing **commands**
-* **agents** which inhabit the universe and perform commands
+* **agents** which inhabit the world and perform commands
 * **devices** which collect data and complete tasks on behalf of agents
 
 Users submit commands and monitor the simulation through an admin UI.
@@ -17,7 +17,7 @@ The simulation runs in discrete steps, so you can watch progress unfold.
 
 ### Agents
 
-Agents inhabit and roam the universe.
+Agents inhabit and roam the world.
 Agents have a set of devices they use to perform tasks like moving and gathering items.
 Agents execute commands submitted by the admin or users.
 When an agent receives a command, it converts it to a sequence of actions.

@@ -119,7 +119,7 @@
 	 (clock (new-fixed-clock :init-val 0 :tick-amount 0))
 	 (NS (ns:init))
 	 (tiles (am:uniform-map '(10 10) :kind :grass :weather :sunny))
-	 (U (make-universe :tiles tiles))
+	 (U (make-world :tiles tiles))
 	 (bat (dev:new-battery))
 	 (eng (dev:new-engine :battery bat))
 	 (devices (list bat eng))

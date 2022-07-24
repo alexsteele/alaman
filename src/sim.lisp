@@ -40,7 +40,7 @@
   "Simulation state."
   (id nil)
   (spec nil)
-  (universe nil)
+  (world nil)
   (clock nil)
   (nameserver nil)
   (admin nil)
@@ -49,7 +49,7 @@
 (defun init (&optional (spec (core:make-spec))
 	     &key (clock (new-system-clock))
 	       (nameserver (ns:init))
-	       (universe (create-universe spec))
+	       (world (create-world spec))
 	       (agents (create-agents spec clock nameserver))
 	       (admin (admin:init :folder nil :ns nameserver :clock clock)))
   (make-sim
@@ -57,12 +57,12 @@
    :spec spec
    :clock clock
    :nameserver nameserver
-   :universe universe
+   :world world
    :admin admin
    :agents (or agents )))
 
-(defun create-universe (spec)
-  (make-universe :dims (core:spec-dims spec)
+(defun create-world (spec)
+  (make-world :dims (core:spec-dims spec)
 		 :tiles (am:uniform-map (core:spec-dims spec))))
 
 (defun create-agents (spec clock nameserver)
@@ -108,7 +108,7 @@
 (defun load-from (path) nil)
 
 (defun tiles (sim)
-  (core:universe-tiles (sim-universe sim)))
+  (core:world-tiles (sim-world sim)))
 
 (defvar *html-style* "
 .tile { width: 20px; height: 20px; }

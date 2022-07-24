@@ -2,21 +2,21 @@
   (:use #:cl))
 (in-package :alaman.core)
 
-(defstruct universe
-  "A map of the universe."
+(defstruct world
+  "A map of the world."
   (dims '(1000 1000))
   (tiles nil)
   (entities nil))
 
 (defstruct tile
-  "A tile in the universe."
+  "A tile in the world."
   (kind nil)
   (weather nil)
   (location nil)
   (entities nil))
 
 (defun tile-at (uni row col)
-  (aref (universe-tiles uni) row col))
+  (aref (world-tiles uni) row col))
 
 (defun tile-at-loc (uni location)
   "location: '(row col)"
@@ -24,7 +24,7 @@
     (tile-at uni row col)))
 
 (defstruct object
-  "An object in the universe."
+  "An object in the world."
   (id nil)
   (name nil)
   (kind nil)

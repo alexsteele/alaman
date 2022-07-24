@@ -57,19 +57,19 @@
   ((battery
     :initarg :battery
     :accessor battery)
-   (universe
-    :initarg :universe
-    :reader universe)
+   (world
+    :initarg :world
+    :reader world)
    (fill-rate
     :initarg :fill-rate
     :reader fill-rate)))
 
-(defun new-solar-panel (&key location universe (info (core:make-device-info)) (fill-rate 1.0) (battery nil))
+(defun new-solar-panel (&key location world (info (core:make-device-info)) (fill-rate 1.0) (battery nil))
   (assert location)
-  (assert universe)
+  (assert world)
   (make-instance 'solar-panel :info info
 			      :location location
-			      :universe universe
+			      :world world
 			      :fill-rate fill-rate
 			      :battery battery))
 
@@ -80,7 +80,7 @@
   (setf (battery panel) nil))
 
 (defmethod sunnyp ((panel solar-panel))
-  (let* ((uni (universe panel))
+  (let* ((uni (world panel))
 	 (loc (location panel))
 	 (tile (core:tile-at-loc uni loc))
 	 (weather (core:tile-weather tile)))
