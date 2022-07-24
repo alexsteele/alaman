@@ -34,6 +34,13 @@
 		:state :new
 		:params (list (cons :bounds bounds) (cons :end-time end-time))))
 
+(defun gather (quantity resource &key (end-time nil))
+  (make-command :id (new-id)
+		:kind :explore
+		:state :new
+		:params (list (cons :quantity quantity) (cons :resource resource)
+			      (cons :end-time end-time))))
+
 (defun state (cmd)
   (cmd-state cmd))
 
