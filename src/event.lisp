@@ -7,11 +7,11 @@
 (defun start-event (cmd)
   (make-event :id (new-id)
 	      :kind :start
-	      :vars (list :command-id (command-id cmd))
-	      :timestamp (command-start-time cmd)))
+	      :vars (list :command-id (cmd-id cmd))
+	      :timestamp (cmd-start-time cmd)))
 
 (defun done-event (cmd)
   (make-event :id (new-id)
 	      :kind :done
-	      :vars (list :command-id (command-id cmd))
-	      :timestamp (command-end-time cmd)))
+	      :vars (list :command-id (cmd-id cmd))
+	      :timestamp (cmd-end-time cmd)))

@@ -66,7 +66,7 @@
   (hash-table-values (admin-agents admin)))
 
 (defun submit (admin command)
-  (let* ((agent-id (core:command-agent-id command))
+  (let* ((agent-id (core:cmd-agent-id command))
 	 (agent (gethash agent-id (admin-agents admin))))
     (if agent-id
 	(agent:submit agent command)

@@ -35,13 +35,13 @@
 		:params (list (cons :bounds bounds) (cons :end-time end-time))))
 
 (defun state (cmd)
-  (command-state cmd))
+  (cmd-state cmd))
 
 (defun param (cmd name)
-  (cdr (assoc name (command-params cmd))))
+  (cdr (assoc name (cmd-params cmd))))
 
 (defun cvar (cmd name)
-  (cdr (assoc name (command-vars cmd))))
+  (cdr (assoc name (cmd-vars cmd))))
 
 (defun donep (cmd)
   (equalp :done (state cmd)))

@@ -1,5 +1,5 @@
 (defpackage alaman/tests/agent
-  (:use #:alaman.time)
+  (:use :cl :fiveam :alaman.time :alaman.core)
   (:import-from :alaman.agent)
   (:import-from :alaman.core)
   (:import-from :alaman.command)
@@ -12,8 +12,7 @@
    (:core :alaman.core)
    (:cmd :alaman.command)
    (:dev :alaman.device)
-   (:am :alaman.map))
-  (:use :cl :alaman :fiveam :alaman.core))
+   (:am :alaman.map)))
 (in-package :alaman/tests/agent)
 
 (def-suite* agent-tests
@@ -104,13 +103,13 @@
     ;; Step to T=10
     (clock-set clock 10)
     (agent:run-step A)
-    (is (equalp :running (core:command-state sleep-cmd)))
+    (is (equalp :running (core:cmd-state sleep-cmd)))
     (is (equalp :sleeping (agent:state A)))
 
     ;; Step to T=20. Finish.
     (clock-set clock 20)
     (agent:run-step A)
-    (is (equalp :done (core:command-state sleep-cmd)))
+    (is (equalp :done (core:cmd-state sleep-cmd)))
     (is (equalp :active (agent:state A)))
 
     (agent:stop A)))
@@ -132,12 +131,12 @@
 
     (clock-set clock 5)
     (agent:run-step A)
-    (is (equalp :running (core:command-state move-cmd)))
+    (is (equalp :running (core:cmd-state move-cmd)))
     (is (equalp '(0 5) (agent:location A)))
 
     (clock-set clock 9)
     (agent:run-step A)
-    (is (equalp :done (core:command-state move-cmd)))
+    (is (equalp :done (core:cmd-state move-cmd)))
     (is (equalp '(0 9) (agent:location A)))
 
     (agent:stop A)))

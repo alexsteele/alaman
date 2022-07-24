@@ -222,8 +222,8 @@
   (push event (events agent)))
 
 (defun finish-command (agent cmd &key (end-time nil))
-  (setf (core:command-state cmd) :done)
-  (setf (core:command-end-time cmd) (or end-time (agent-time agent)))
+  (setf (core:cmd-state cmd) :done)
+  (setf (core:cmd-end-time cmd) (or end-time (agent-time agent)))
   (record agent (event:done-event cmd)))
 
 (defun find-dev (agent kind)
@@ -237,11 +237,11 @@
 ;; Planning  -------------------------------------------------------------------
 
 (defmethod plan (agent cmd)
-  (case (core:command-kind cmd)
+  (case (core:cmd-kind cmd)
     (:no-op (plan-no-op agent cmd))
     (:sleep (plan-sleep agent cmd))
     (:move (plan-move agent cmd))
-    (otherwise (error (format nil "unrecognized command kind ~a" (core:command-kind cmd))))))
+    (otherwise (error (format nil "unrecognized command kind ~a" (core:cmd-kind cmd))))))
 
 (defmethod plan-no-op (agent cmd)
   (push-action agent (make-action :fn #'(lambda () (exec-no-op agent cmd))
@@ -291,7 +291,7 @@
 	  (finish-command agent cmd))
 	(progn
 	  (set-state agent :sleeping)
-	  (setf (core:command-state cmd) :running)
+	  (setf (core:cmd-state cmd) :running)
 	  (push-action agent (make-action :fn #'(lambda () (exec-sleep agent cmd))
 					  :scope :global
 					  :description :sleep
@@ -323,7 +323,6 @@
 	 ;; How far do we need to go?
 	 (dist (distance src dst))
 	 (x-dist (abs (- (point-x src) (point-x dst))))
-	 (y-dist (abs (- (point-y src) (point-y dst))))
 	 (x-ratio (/ x-dist dist))
 	 (y-ratio (- 1 x-ratio))
 	 ;; How far can we go this step and how long will it take?
@@ -351,7 +350,7 @@
 
     ;; Move if needed
     (when (not (equalp src dst))
-      (setf (core:command-state cmd) :running)
+      (setf (core:cmd-state cmd) :running)
       (dev:govern eng 1.0)
       (setf end-time (move-step agent dst eng))
       (setf end-location (location agent)))
