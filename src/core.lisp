@@ -2,16 +2,6 @@
   (:use #:cl))
 (in-package :alaman.core)
 
-(defstruct spec
-  "Simulation specification."
-  (name "")
-  (folder nil)
-  (seed nil)
-  (dims '(100 100))
-  (min-agents 0)
-  (max-agents 3)
-  (clock-speed 1))
-
 (defstruct universe
   "A map of the universe."
   (dims '(1000 1000))
@@ -69,8 +59,8 @@
 
 (defstruct (command (:conc-name cmd-))
   "A command to be performed by an agent."
-  (id "")
-  (agent-id "")
+  (id nil)
+  (agent-id nil)
   (kind nil)
   (state nil)
   (params nil)

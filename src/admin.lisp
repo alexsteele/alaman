@@ -3,7 +3,7 @@
   (:import-from #:alaman.agent)
   (:import-from #:alaman.core)
   (:import-from #:alaman.ns)
-  (:import-from #:alexandria :hash-table-values :random-elt)
+  (:import-from #:alexandria :hash-table-keys :hash-table-values :random-elt)
   (:local-nicknames
    (:agent :alaman.agent)
    (:core :alaman.core)
@@ -56,6 +56,32 @@
 (defun stop (admin)
   nil)
 
+(defun submit (admin command)
+  (let* ((agent-id (core:cmd-agent-id command)))
+    (if agent-id
+	(agent:submit (agent-connect! admin agent-id) command)
+	(plan admin command))))
+
+(defun plan (admin command)
+  (agent:submit (rand-agent admin) command))
+
+(defun rand-agent (admin)
+  (let* ((agent-id (random-elt (hash-table-keys (admin-agents admin))))
+	 (agent (agent-connect! admin agent-id)))
+    agent))
+
+(defun agent-connect (admin agent-id)
+  (let ((info (gethash agent-id (admin-agents admin))))
+    (assert info)
+    (ns:connect (admin-ns admin)
+		(format nil "/agent/~a" (core:agent-info-name info)))))
+
+(defun agent-connect! (admin agent-id)
+  (let ((agent (agent-connect admin agent-id)))
+    (when (not agent)
+      (error "could not connect to agent"))
+    agent))
+
 (defun register-agent (admin info)
   nil)
 
@@ -64,17 +90,6 @@
 
 (defun list-agents (admin)
   (hash-table-values (admin-agents admin)))
-
-(defun submit (admin command)
-  (let* ((agent-id (core:cmd-agent-id command))
-	 (agent (gethash agent-id (admin-agents admin))))
-    (if agent-id
-	(agent:submit agent command)
-	(plan admin command))))
-
-(defun plan (admin command)
-  (agent:submit (random-elt (hash-table-values (admin-agents admin)))
-		command))
 
 (defun cancel (command-id)
   nil)

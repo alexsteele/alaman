@@ -14,7 +14,8 @@
    (:am :alaman.map)
    (:time :alaman.time)
    (:sp :spinneret))
-  (:export #:make-sim
+  (:export #:make-spec
+           #:make-sim
 	   #:init
 	   #:start
 	   #:run
@@ -24,6 +25,16 @@
 	   #:save
 	   #:load-from))
 (in-package :alaman.sim)
+
+(defstruct spec
+  "Simulation specification."
+  (name "")
+  (folder nil)
+  (seed nil)
+  (dims '(100 100))
+  (min-agents 1)
+  (max-agents 3)
+  (clock-speed 1))
 
 (defstruct sim
   "Simulation state."
@@ -39,8 +50,8 @@
 	     &key (clock (new-system-clock))
 	       (nameserver (ns:init))
 	       (universe (create-universe spec))
-	       (admin (admin:init :folder nil :ns nameserver :clock clock))
-	       (agents nil))
+	       (agents (create-agents spec clock nameserver))
+	       (admin (admin:init :folder nil :ns nameserver :clock clock)))
   (make-sim
    :id (new-id)
    :spec spec
@@ -48,7 +59,7 @@
    :nameserver nameserver
    :universe universe
    :admin admin
-   :agents (or agents (create-agents spec clock nameserver))))
+   :agents (or agents )))
 
 (defun create-universe (spec)
   (make-universe :dims (core:spec-dims spec)
@@ -66,9 +77,9 @@
 		   :ns nameserver))))
 
 (defun start (sim)
-  (admin:start (sim-admin sim))
   (dolist (agent (sim-agents sim))
     (agent:start agent))
+  (admin:start (sim-admin sim)) ; admin last for ns registration
   sim)
 
 (defun run-step (sim)
@@ -89,7 +100,7 @@
   sim)
 
 (defun submit (sim command)
-  (admin:submit command))
+  (admin:submit (sim-admin sim) command))
 
 
 (defun spawn-agent (sim &optional agent) "Spawn an agent" nil)
