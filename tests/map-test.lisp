@@ -1,11 +1,17 @@
 (defpackage alaman/tests/map
-  (:use :cl :alaman :fiveam :alaman.map :alaman.core))
+  (:use :cl :fiveam :alaman.map :alaman.core)
+  (:import-from :serapeum :dict :href))
 (in-package :alaman/tests/map)
 
 (def-suite* map-tests
   :description "map tests")
 
 (in-suite map-tests)
+
+(test map-objects
+  (is (equalp (wheat 3) (wheat 3)))
+  (is (not (equalp (grass 1) (grass 3))))
+  (is (equalp 3 (href (water 3) :quantity))))
 
 (test map-basics
   (let ((m (uniform-map '(3 3) :kind :wheat)))

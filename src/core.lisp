@@ -25,8 +25,8 @@
 
 (defstruct object
   "An object in the universe."
-  (id "")
-  (name "")
+  (id nil)
+  (name nil)
   (kind nil)
   (tags nil)
   (vars nil)

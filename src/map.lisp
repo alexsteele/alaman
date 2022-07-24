@@ -1,10 +1,16 @@
 (defpackage alaman.map
   (:use #:cl #:alaman.core)
   (:import-from :spinneret)
+  (:import-from :serapeum :dict :href)
   (:local-nicknames
    (:core :alaman.core)
    (:sp :spinneret))
-  (:export #:generate-map
+  (:export #:water
+	   #:wheat
+	   #:grass
+	   #:rock
+	   #:oil
+	   #:generate-map
 	   #:uniform-map
 	   #:fill-tiles
 	   #:init-from-tile-kinds
@@ -15,27 +21,46 @@
 (defvar *all-tile-kinds* '(water grass wheat rock))
 (defvar *all-weathers* '(:sunny :cloudy :rainy))
 
-(defun water ()
+(defun water (&optional (quantity 1))
+  (dict :kind :water :quantity quantity))
+
+(defun wheat (&optional (quantity 1))
+  (dict :kind :wheat :quantity quantity))
+
+(defun grass (&optional (quantity 1))
+  (dict :kind :grass :quantity quantity))
+
+(defun rock (&optional (quantity 1))
+  (dict :kind :rock :quantity quantity))
+
+(defun oil (&optional (quantity 1))
+  (dict :kind :oil :quantity quantity))
+
+(defun wood (&optional (quantity 1))
+  (dict :kind :wood :quantity 1))
+
+(defun water-tile ()
   (make-tile :kind :water
-	     :entities '((water quantity 10))))
+	     :entities (list (water))))
 
-(defun grass ()
-  (make-tile :kind :grass))
-
-(defun wheat ()
+(defun wheat-tile ()
   (make-tile :kind :wheat
-	     :entities '((wheat quantity 10))))
+	     :entities (list (wheat))))
 
-(defun rock ()
+(defun grass-tile ()
+  (make-tile :kind :grass
+	     :entities (list (grass))))
+
+(defun rock-tile ()
   (make-tile :kind :rock
-	     :entities '((rock quantity 10))))
+	     :entities (list (rock))))
 
 (defun make-tile-kind (kind)
   (case kind
-    (:water (water))
-    (:grass (grass))
-    (:wheat (wheat))
-    (:rock (rock))
+    (:water (water-tile))
+    (:grass (grass-tile))
+    (:wheat (wheat-tile))
+    (:rock (rock-tile))
     (t (error "unrecognized tile kind"))))
 
 (defun fill-map (m fn)
