@@ -39,6 +39,9 @@
 (defun wood (&optional (quantity 1))
   (dict :kind :wood :quantity 1))
 
+(defun iron (&optional (quantity 1))
+  (dict :kind :iron :quantity 1))
+
 (defun water-tile ()
   (make-tile :kind :water
 	     :entities (list (water))))
