@@ -37,7 +37,7 @@
 
 (defun gather (quantity resource &key (end-time nil))
   (make-command :id (new-id)
-		:kind :explore
+		:kind :gather
 		:state :new
 		:params (dict :quantity quantity
 			      :resource resource
