@@ -48,8 +48,8 @@
 
 (defstruct device-info
   "Information about a device."
-  (id "")
-  (name "")
+  (id nil)
+  (name nil)
   (kind nil)
   (agent-id nil)
   (state nil)

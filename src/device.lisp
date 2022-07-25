@@ -1,7 +1,7 @@
 (defpackage alaman.device
   (:use #:cl)
   (:import-from :alaman.core)
-  (:import-from :alexandria :when-let)
+  (:import-from :alexandria :when-let :hash-table-keys :hash-table-values)
   (:local-nicknames
    (:core :alaman.core)))
 ;; Note: export-all below
@@ -14,6 +14,9 @@
    (location
     :initarg :location
     :accessor location)))
+
+(defmethod device-id ((dev device))
+  (core:device-info-id (info dev)))
 
 (defmethod run-step ((dev device) elapsed-sec)
   "Advance the device state by elapsed-sec."
@@ -150,9 +153,61 @@
   "Returns the force output by the engine."
   (* (output eng) (max-thrust eng)))
 
-;; TODO: implement
-(defclass thermometer (device) ())
 
-(defmethod read-temp (thermometer) nil)
+; channel -> map[key][fn(message)]
+(defun make-radio-spectrum ()
+  (make-hash-table :test #'equalp))
+
+(defun empty-channel ()
+  (make-hash-table :test #'equalp))
+
+(defvar *spectrum* (make-radio-spectrum))
+
+(defun spectrum-subscribe (spectrum channel key fn)
+  (let ((ch (gethash channel spectrum (empty-channel))))
+    (setf (gethash key ch) fn)
+    (setf (gethash channel spectrum) ch)))
+
+(defun spectrum-unsubscribe (spectrum channel key)
+  (when-let ((ch (gethash channel spectrum)))
+    (remhash key ch)
+    (when (eq 0 (hash-table-size ch))
+      (remhash channel spectrum))))
+
+;; A radio can listen to a single channel.
+(defclass radio (device)
+  ((channel
+    :initform nil
+    :accessor channel)
+   (spectrum
+    :initarg :spectrum
+    :reader spectrum)))
+
+(defun new-radio (&key
+		    (info (core:make-device-info :id (core:new-id) :kind :radio))
+		    (spectrum *spectrum*))
+  (make-instance 'radio :info info :spectrum spectrum))
+
+(defun radio-listen (radio channel fn)
+  (radio-off radio) ; unsubscribe
+  (spectrum-subscribe (spectrum radio)
+		      channel
+		      (device-id radio)
+		      fn)
+  (setf (channel radio) channel))
+
+(defvar *empty-channel* (make-hash-table))
+
+(defun radio-broadcast (radio channel message)
+  (dolist (listener (hash-table-values
+		     (gethash channel (spectrum radio) *empty-channel*)))
+    (funcall listener message)))
+
+(defun radio-off (radio)
+  (when (channel radio)
+    (spectrum-unsubscribe (spectrum radio)
+			  (channel radio)
+			  (device-id radio))
+    (setf (channel radio) nil)))
 
 (core:export-all :alaman.device)

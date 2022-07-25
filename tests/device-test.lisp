@@ -1,5 +1,5 @@
 (defpackage alaman/tests/device
-  (:use :cl :alaman :fiveam :alaman.core)
+  (:use :cl :fiveam :alaman.core)
   (:import-from :alaman.device)
   (:import-from :alaman.map)
   (:local-nicknames
@@ -76,5 +76,34 @@
     (dev:run-step eng 1.0)
     (is (= (dev:output eng) 0.0))
     (is (= (dev:thrust eng) 0.0))))
+
+(test radio-test
+  (let* ((bat (dev:new-battery))
+	 (spectrum (dev:make-radio-spectrum))
+	 (radio (dev:new-radio :spectrum spectrum))
+	 (inbox1 nil)
+	 (inbox2 nil))
+
+    ;; no op
+    (dev:radio-broadcast radio 0 "m0")
+
+    (dev:radio-listen radio 1 #'(lambda (m) (push m inbox1)))
+    (dev:radio-broadcast radio 0 "m0")
+    (is (eq 0 (length inbox1)))
+    (is (eq 0 (length inbox2)))
+
+    (dev:radio-broadcast radio 1 "m1")
+    (is (equalp (list "m1") inbox1))
+    (is (eq 0 (length inbox2)))
+
+    (dev:radio-listen radio 2 #'(lambda (m) (push m inbox2)))
+    (dev:radio-broadcast radio 1 "m1")	; should not be received
+    (dev:radio-broadcast radio 2 "m2")
+    (is (equalp (list "m1") inbox1))
+    (is (equalp (list "m2") inbox2))
+
+    (dev:radio-off radio)
+    (dev:radio-broadcast radio 1 "m1")	; should not be received
+    (is (equalp (list "m1") inbox1))))
 
 (run! 'device-tests)
