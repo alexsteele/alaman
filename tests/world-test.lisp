@@ -4,16 +4,16 @@
 (in-package :alaman/tests/world)
 
 (def-suite* world-tests
-  :description "map tests")
+  :description "world tests")
 
 (in-suite world-tests)
 
-(test map-objects
+(test world-objects
   (is (equalp (wheat 3) (wheat 3)))
   (is (not (equalp (grass 1) (grass 3))))
   (is (equalp 3 (href (water 3) :quantity))))
 
-(test map-basics
+(test world-basics
   (let ((m (uniform-map '(3 3) :kind :wheat)))
     (is (equalp '(3 3) (array-dimensions m)))
     (is (equalp (make-tile :kind :wheat :weather :sunny) (aref m 0 0)))
