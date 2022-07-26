@@ -24,10 +24,10 @@
     (is (equalp (make-array '(3 3) :initial-element :grass) (tile-kinds m)))))
 
 (test init-from-tile-kinds
-  (let* ((kinds #2A('(grass grass grass)
-                    '(wheat grass wheat)
-		    '(water wheat rock)))
-	(m (init-from-tile-kinds kinds)))
-    (is (equalp (tile-kinds m) kinds))))
+  (let* ((kinds #2A((:grass :grass :grass)
+                    (:wheat :grass :wheat)
+		    (:water :wheat :rock)))
+	(tiles (init-from-tile-kinds kinds)))
+    (is (equalp (tile-kinds tiles) kinds))))
 
-(run! 'world-tests)
+(debug! 'world-tests)
