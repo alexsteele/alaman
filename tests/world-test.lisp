@@ -30,4 +30,18 @@
 	(tiles (init-from-tile-kinds kinds)))
     (is (equalp (tile-kinds tiles) kinds))))
 
+(test world-run-step
+  (let* ((kinds #2A((:wheat :rock)))
+	 (tiles (init-from-tile-kinds kinds))
+	 (wheat (first (tile-entities (row-major-aref tiles 0))))
+	 (rock (first (tile-entities (row-major-aref tiles 1)))))
+
+    (is (eq 1 (href wheat :quantity)))
+    (is (eq 1 (href rock :quantity)))
+
+    (run-step tiles 1)
+
+    (is (eq 2 (href wheat :quantity)))
+    (is (eq 1 (href rock :quantity)))))
+
 (debug! 'world-tests)

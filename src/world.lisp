@@ -15,6 +15,8 @@
 	   #:fill-tiles
 	   #:init-from-tile-kinds
 	   #:tile-kinds
+	   #:make-tile-kind
+	   #:run-step
 	   #:render-html))
 (in-package alaman.world)
 
@@ -81,6 +83,24 @@
 
 ;; Map
 
+(defvar *max-resource-quantity* 10)
+(defvar *regen-resources* '(:wheat :grass :water))
+(defvar *regen-rate* 1)
+
+(defun tile-run-step (tile elapsed-time)
+  (when (member (tile-kind tile) *regen-resources*)
+    (dolist (obj (tile-entities tile))
+      (when (equalp (href obj :kind) (tile-kind tile))
+	(let* ((quantity (href obj :quantity))
+	       (delta (* elapsed-time *regen-rate*))
+	       (new-quantity (min *max-resource-quantity*
+				  (+ quantity delta))))
+	  (setf (href obj :quantity) new-quantity))))))
+
+(defun run-step (tiles elapsed-time)
+  (dotimes (i (array-total-size tiles))
+    (tile-run-step (row-major-aref tiles i) elapsed-time)))
+
 (defun fill-array (arr fn)
   (dotimes (i (array-total-size arr))
     (setf (row-major-aref arr i) (funcall fn)))
@@ -102,7 +122,7 @@
     result))
 
 (defun init-from-tile-kinds (kinds)
-  (map-array kinds #'(lambda (k) (make-tile :kind k))))
+  (map-array kinds #'(lambda (k) (make-tile-kind k))))
 
 (defun tile-kinds (m)
   (map-array m #'tile-kind))
