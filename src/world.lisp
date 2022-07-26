@@ -81,14 +81,14 @@
 
 ;; Map
 
-(defun fill-map (m fn)
-  (dotimes (i (array-total-size m))
-    (setf (row-major-aref m i) (funcall fn)))
-  m)
+(defun fill-array (arr fn)
+  (dotimes (i (array-total-size arr))
+    (setf (row-major-aref arr i) (funcall fn)))
+  arr)
 
-(defun fill-tiles (m &key (kind :grass) (weather :sunny))
-  (fill-map m #'(lambda () (make-tile :kind kind
-				      :weather weather))))
+(defun fill-tiles (tiles &key (kind :grass) (weather :sunny))
+  (fill-array tiles #'(lambda () (make-tile :kind kind
+					    :weather weather))))
 
 (defun uniform-map (dimensions &key (kind :grass) (weather :sunny))
   (fill-tiles (make-array dimensions) :kind kind
@@ -106,6 +106,8 @@
 
 (defun tile-kinds (m)
   (map-array m #'tile-kind))
+
+;; Rendering
 
 (defun render-html (tiles)
   ;; TODO: Consider adding an on-hover so you can see the contents of a tile.
