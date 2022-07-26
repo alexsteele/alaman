@@ -3,7 +3,7 @@
   (:import-from :alaman.admin)
   (:import-from :alaman.agent)
   (:import-from :alaman.ns)
-  (:import-from :alaman.map)
+  (:import-from :alaman.world)
   (:import-from :alaman.time)
   (:import-from :spinneret)
   (:local-nicknames
@@ -11,7 +11,7 @@
    (:agent :alaman.agent)
    (:core :alaman.core)
    (:ns :alaman.ns)
-   (:am :alaman.map)
+   (:am :alaman.world)
    (:time :alaman.time)
    (:sp :spinneret))
   (:export #:make-spec

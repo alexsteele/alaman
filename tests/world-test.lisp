@@ -1,12 +1,12 @@
-(defpackage alaman/tests/map
-  (:use :cl :fiveam :alaman.map :alaman.core)
+(defpackage alaman/tests/world
+  (:use :cl :fiveam :alaman.world :alaman.core)
   (:import-from :serapeum :dict :href))
-(in-package :alaman/tests/map)
+(in-package :alaman/tests/world)
 
-(def-suite* map-tests
+(def-suite* world-tests
   :description "map tests")
 
-(in-suite map-tests)
+(in-suite world-tests)
 
 (test map-objects
   (is (equalp (wheat 3) (wheat 3)))
@@ -30,4 +30,4 @@
 	(m (init-from-tile-kinds kinds)))
     (is (equalp (tile-kinds m) kinds))))
 
-(run! 'map-tests)
+(run! 'world-tests)

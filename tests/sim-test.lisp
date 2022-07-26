@@ -6,7 +6,7 @@
   (:import-from :alaman.core)
   (:import-from :alaman.command)
   (:import-from :alaman.ns)
-  (:import-from :alaman.map)
+  (:import-from :alaman.world)
   (:local-nicknames
    (:admin :alaman.admin)
    (:agent :alaman.agent)
@@ -14,7 +14,7 @@
    (:cmd :alaman.command)
    (:ns :alaman.ns)
    (:sim :alaman.sim)
-   (:am :alaman.map))
+   (:am :alaman.world))
   (:use :cl :fiveam :alaman.core))
 (in-package :alaman/tests/sim)
 

@@ -1,4 +1,4 @@
-(defpackage alaman.map
+(defpackage alaman.world
   (:use #:cl #:alaman.core)
   (:import-from :spinneret)
   (:import-from :serapeum :dict :href)
@@ -16,7 +16,7 @@
 	   #:init-from-tile-kinds
 	   #:tile-kinds
 	   #:render-html))
-(in-package alaman.map)
+(in-package alaman.world)
 
 (defvar *all-tile-kinds* '(water grass wheat rock))
 (defvar *all-weathers* '(:sunny :cloudy :rainy))
@@ -79,7 +79,7 @@
 (defun cloudyp (tile)
   (equalp (tile-weather tile) :cloudy))
 
-;;; Map
+;; Map
 
 (defun fill-map (m fn)
   (dotimes (i (array-total-size m))

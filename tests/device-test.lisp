@@ -1,10 +1,10 @@
 (defpackage alaman/tests/device
   (:use :cl :fiveam :alaman.core)
   (:import-from :alaman.device)
-  (:import-from :alaman.map)
+  (:import-from :alaman.world)
   (:local-nicknames
    (:dev :alaman.device)
-   (:am :alaman.map)))
+   (:am :alaman.world)))
 (in-package :alaman/tests/device)
 
 (def-suite* device-tests

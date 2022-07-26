@@ -12,11 +12,11 @@
    (:file "agent" :depends-on ("core" "command" "device" "event" "time" "ns"))
    (:file "core")
    (:file "command" :depends-on ("core"))
-   (:file "device" :depends-on ("core" "map"))
+   (:file "device" :depends-on ("core" "world"))
    (:file "event" :depends-on ("core"))
    (:file "ns")
    (:file "time")
-   (:file "map" :depends-on ("core"))
+   (:file "world" :depends-on ("core"))
    (:file "sim" :depends-on ("admin" "agent" "core" "ns" "time"))
    (:file "main" :depends-on ("sim")))
   :description "agent simulation"
@@ -32,7 +32,7 @@
   :components ((:file "admin-test")
 	       (:file "agent-test")
 	       (:file "device-test")
-	       (:file "map-test")
+	       (:file "world-test")
 	       (:file "ns-test")
 	       (:file "sim-test"))
   :description "Test system for alaman"

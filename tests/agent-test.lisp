@@ -5,14 +5,14 @@
   (:import-from :alaman.command)
   (:import-from :alaman.device)
   (:import-from :alaman.ns)
-  (:import-from :alaman.map)
+  (:import-from :alaman.world)
   (:local-nicknames
    (:agent :alaman.agent)
    (:ns :alaman.ns)
    (:core :alaman.core)
    (:cmd :alaman.command)
    (:dev :alaman.device)
-   (:am :alaman.map)))
+   (:am :alaman.world)))
 (in-package :alaman/tests/agent)
 
 (def-suite* agent-tests
