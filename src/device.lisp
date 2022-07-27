@@ -2,6 +2,7 @@
   (:use #:cl)
   (:import-from :alaman.core)
   (:import-from :alexandria :when-let :hash-table-keys :hash-table-values)
+  (:import-from :serapeum :partition)
   (:local-nicknames
    (:core :alaman.core)))
 ;; Note: export-all below
@@ -24,6 +25,41 @@
 
 (defmethod kind ((dev device))
   (core:device-info-kind (info dev)))
+
+(defclass bag (device)
+  ((capacity
+    :initarg :capacity
+    :accessor bag-capacity)
+   (items
+    :initform nil
+    :accessor bag-items)))
+
+(defun new-bag (&key
+		  (info (core:make-device-info :kind :bag))
+		  (capacity 10))
+  (make-instance 'bag :info info :capacity capacity))
+
+(defun bag-fullp (bag)
+  (eq (length (bag-items bag)) (bag-capacity bag)))
+
+(defun bag-add (bag item)
+  (when (bag-fullp bag)
+    (error "full bag"))
+  (push item (bag-items bag)))
+
+(defun bag-remove (bag item &key (test #'equalp) (limit 1))
+  (let ((matches nil)
+	(match-count 0)
+	(leftover nil))
+    (loop for item2 in (bag-items bag)
+	  do (if (and (funcall test item item2)
+		      (< match-count limit))
+		 (progn
+		   (push item2 matches)
+		   (incf match-count))
+		 (push item2 leftover)))
+    (setf (bag-items bag) leftover)
+    (if (= limit 1) (first matches) matches)))
 
 (defclass battery (device)
   ((capacity

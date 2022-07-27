@@ -4,13 +4,26 @@
   (:import-from :alaman.world)
   (:local-nicknames
    (:dev :alaman.device)
-   (:am :alaman.world)))
+   (:world :alaman.world)))
 (in-package :alaman/tests/device)
 
 (def-suite* device-tests
   :description "device tests")
 
 (in-suite device-tests)
+
+(test bag-test
+  (let ((bag (dev:new-bag)))
+    (is (not (dev:bag-fullp bag)))
+    (dotimes (i 10)
+      (dev:bag-add bag i))
+    (is (dev:bag-fullp bag))
+    (is (= 3 (dev:bag-remove bag 3)))
+    (is (null (dev:bag-remove bag 3)))
+    (is (equalp '(0 1 2) (dev:bag-remove bag nil
+					 :test #'(lambda (x y) (< y 3))
+					 :limit 10)))
+    (is (null (dev:bag-remove bag 1)))))
 
 (test battery-test
   (let ((bat (dev:new-battery)))
@@ -22,7 +35,7 @@
     (is (= 100 (dev:level bat)))))
 
 (test solar-panel-test
-  (let* ((tiles (am:uniform-map '(1 1) :weather :sunny))
+  (let* ((tiles (world:uniform-map '(1 1) :weather :sunny))
 	 (U (make-world :tiles tiles))
 	 (panel (dev:new-solar-panel :location '(0 0)
 				     :world U
@@ -42,7 +55,7 @@
     (is (equalp 60.0 (dev:level bat)))
 
     ; cloudy? no change
-    (am:fill-tiles tiles :weather :cloudy)
+    (world:fill-tiles tiles :weather :cloudy)
     (dev:run-step panel 10)
     (is (equalp 60.0 (dev:level bat)))))
 
