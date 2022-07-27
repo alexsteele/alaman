@@ -300,6 +300,8 @@
 
 ;; ---------- move ----------
 
+(defvar *max-agent-speed* 10)
+
 (defun point-x (loc) (car loc))
 (defun point-y (loc) (car (cdr loc)))
 (defun distance (p1 p2)
@@ -314,7 +316,7 @@
 ;; TODO: f=ma?
 (defun calc-speed (agent eng)
   (declare (ignore agent))
-  (/ (dev:thrust eng) (dev:max-thrust eng)))
+  (* *max-agent-speed* (/ (dev:thrust eng) (dev:max-thrust eng))))
 
 ;; Moves `agent` in a straight line towards point `dst` using engine `eng`
 ;; Returns the end-time of the move
