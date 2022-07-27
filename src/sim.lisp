@@ -11,7 +11,7 @@
    (:agent :alaman.agent)
    (:core :alaman.core)
    (:ns :alaman.ns)
-   (:am :alaman.world)
+   (:world :alaman.world)
    (:time :alaman.time)
    (:sp :spinneret))
   (:export #:make-spec
@@ -63,7 +63,7 @@
 
 (defun create-world (spec)
   (make-world :dims (core:spec-dims spec)
-		 :tiles (am:uniform-map (core:spec-dims spec))))
+		 :tiles (world:uniform-map (core:spec-dims spec))))
 
 (defun create-agents (spec clock nameserver)
   (let* ((count (core:rand-range-incl (spec-min-agents spec)
@@ -90,6 +90,7 @@
     (admin:run-step (sim-admin sim))
     (dolist (agent (sim-agents sim))
       (agent:run-step agent))
+    (world:run-step (tiles sim) 1)
     (clock-unpin clock))
   sim)
 
@@ -102,8 +103,8 @@
 (defun submit (sim command)
   (admin:submit (sim-admin sim) command))
 
-
 (defun spawn-agent (sim &optional agent) "Spawn an agent" nil)
+
 (defun save (sim &optional path) nil)
 (defun load-from (path) nil)
 
@@ -127,7 +128,7 @@
      (:body
       (:h1 "alaman")
       (:h2 "map")
-      (am:render-html (tiles sim))
+      (world:render-html (tiles sim))
       (:h2 "admin")
       (:h2 "agents")))))
 
