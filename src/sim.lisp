@@ -50,7 +50,7 @@
 	     &key (clock (new-system-clock))
 	       (nameserver (ns:init))
 	       (world (create-world spec))
-	       (agents (create-agents spec clock nameserver))
+	       (agents (create-agents spec world clock nameserver))
 	       (admin (admin:init :folder nil :ns nameserver :clock clock)))
   (make-sim
    :id (new-id)
@@ -59,22 +59,24 @@
    :nameserver nameserver
    :world world
    :admin admin
-   :agents (or agents )))
+   :agents agents))
 
 (defun create-world (spec)
   (make-world :dims (core:spec-dims spec)
-		 :tiles (world:uniform-map (core:spec-dims spec))))
+	      :tiles (world:uniform-map (core:spec-dims spec))))
 
-(defun create-agents (spec clock nameserver)
+(defun create-agents (spec world clock nameserver)
   (let* ((count (core:rand-range-incl (spec-min-agents spec)
 				      (spec-max-agents spec)))
 	 (names (agent:make-agent-names count)))
     (assert (>= count 0))
     (loop for name in names
-	  collect (agent:init
+	  collect (agent:new-rover
 		   :info (make-agent-info :id (new-id) :name name)
+		   :world world
 		   :clock clock
-		   :ns nameserver))))
+		   :ns nameserver
+		   :world world))))
 
 (defun start (sim)
   (dolist (agent (sim-agents sim))

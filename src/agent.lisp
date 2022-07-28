@@ -23,7 +23,6 @@
 	   #:stop
 	   #:submit
 	   #:run-step
-	   ;; Blueprints
 	   #:new-rover))
 
 (in-package :alaman.agent)
@@ -58,6 +57,16 @@
     (dotimes (i count)
       (setf names(cons (make-unique-agent-name names) names)))
     names))
+
+;; Agent Blueprints ------------------------------------------------
+
+(defun new-rover (&key info world clock ns)
+  (let* ((bag (dev:new-bag))
+	 (bat (dev:new-battery))
+	 (sp (dev:new-solar-panel :location '(0 0) :world world :battery bat))
+	 (eng (dev:new-engine :battery bat))
+	 (devices (list bag bat sp eng)))
+    (init :info info :ns ns :clock clock :devices devices)))
 
 ;; Agent ------------------------------------------------------------
 
@@ -367,9 +376,3 @@
 					  :scope :global
 					  :description :move))))
     end-time))
-
-;; Agent Blueprints ------------------------------------------------------------
-
-;; TODO: Implement
-(defun new-rover (&key info clock ns world location max-speed)
-  nil)
