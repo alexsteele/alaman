@@ -46,7 +46,7 @@
   (admin nil)
   (agents nil))
 
-(defun init (&optional (spec (core:make-spec))
+(defun init (&optional (spec (make-spec))
 	     &key (clock (new-system-clock))
 	       (nameserver (ns:init))
 	       (world (create-world spec))
