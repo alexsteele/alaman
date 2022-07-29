@@ -19,6 +19,7 @@
 	   #:info
 	   #:state
 	   #:location
+	   #:mass
 	   #:start
 	   #:stop
 	   #:submit
@@ -130,6 +131,7 @@
 (defmethod start (agent)
   "Start and return the agent. Must be called after creation."
   (dbg agent "start")
+  (update-mass agent)
   (set-state agent :active)
   (register agent)
   (setf (step-end agent) (agent-time agent))
@@ -175,6 +177,10 @@
   (dbg agent "set-state ~a" state)
   (setf (core:agent-info-state (info agent)) state)
   agent)
+
+(defmethod update-mass (agent)
+  (setf (core:agent-info-mass (info agent))
+	(reduce '+ (mapcar #'dev:mass (devices agent)))))
 
 (defmethod agent-time (agent)
   (clock-time (clock agent)))
