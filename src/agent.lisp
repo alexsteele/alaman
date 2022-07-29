@@ -128,6 +128,9 @@
 (defmethod state (agent)
   (core:agent-info-state (pinfo agent)))
 
+(defmethod mass (agent)
+  (core:agent-info-mass (pinfo agent)))
+
 (defmethod location (agent)
   (core:agent-info-location (pinfo agent)))
 

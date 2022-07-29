@@ -42,6 +42,7 @@
   (tags nil)
   (settings nil)
   (vars nil)
+  (mass nil)
   (location nil)
   (orientation nil)
   (last-seen nil))
