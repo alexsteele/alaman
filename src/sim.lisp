@@ -23,7 +23,9 @@
 	   #:submit
 	   #:stop
 	   #:save
-	   #:load-from))
+	   #:load-from
+	   #:render-html
+	   #:render-html-string))
 (in-package :alaman.sim)
 
 (defstruct config
@@ -133,8 +135,16 @@
       (:h2 "map")
       (world:render-html (tiles sim))
       (:h2 "admin")
-      (:h2 "agents")))))
+      (:h2 "agents")
+      (render-agents-html sim)))))
 
 (defun render-html-string (sim)
   (let ((sp:*html-style* :human))
     (sp:with-html-string (render-html sim))))
+
+(defun render-agents-html (sim)
+  (sp:with-html
+   (dolist (agent (sim-agents sim))
+     (:div
+      (:h3 (core:agent-info-name (agent:info agent)))
+      (:p (format nil "~a" (agent:info agent)))))))
