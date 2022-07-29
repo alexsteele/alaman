@@ -152,8 +152,6 @@
   (setf (core:cmd-agent-id command) (core:agent-info-id (pinfo agent)))
   (plan agent command))
 
-;; TODO: Return completed commands.
-;; TODO: Step devices.
 (defmethod run-step (agent)
   "Advance the agent to the current clock time. Returns a list of completed commands."
   (dbg agent "step")
