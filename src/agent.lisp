@@ -75,7 +75,8 @@
 
 (defclass agent ()
   ((info
-    :initarg :info)
+    :initarg :info
+    :reader info)
    (ns
     :initarg :ns
     :reader nameserv)
@@ -106,7 +107,7 @@
 
 (defun dbg (agent &rest args)
   (format t "agent ~a: ~a~%"
-	  (core:agent-info-name (pinfo agent))
+	  (core:agent-info-name (info agent))
 	  (apply #'format nil args)))
 
 (defun init (&key info ns clock devices)
@@ -117,22 +118,14 @@
 		 :clock clock
 		 :devices devices))
 
-(defmethod info (agent)
-  "Returns a copy of the agent's core:agent-info."
-  (core:copy-agent-info (slot-value agent 'info)))
-
-(defmethod pinfo (agent)
-  "Internal version of info without the copy."
-  (slot-value agent 'info))
-
 (defmethod state (agent)
-  (core:agent-info-state (pinfo agent)))
+  (core:agent-info-state (info agent)))
 
 (defmethod mass (agent)
-  (core:agent-info-mass (pinfo agent)))
+  (core:agent-info-mass (info agent)))
 
 (defmethod location (agent)
-  (core:agent-info-location (pinfo agent)))
+  (core:agent-info-location (info agent)))
 
 (defmethod start (agent)
   "Start and return the agent. Must be called after creation."
@@ -152,7 +145,7 @@
 ;; TODO: Defer planning to run-step for better prioritization?
 (defmethod submit (agent command)
   "Submit a command for execution."
-  (setf (core:cmd-agent-id command) (core:agent-info-id (pinfo agent)))
+  (setf (core:cmd-agent-id command) (core:agent-info-id (info agent)))
   (plan agent command))
 
 (defmethod run-step (agent)
@@ -173,14 +166,14 @@
    (nameserv agent)
    (ns-entry-name agent)
    agent
-   (info agent)))
+   (core:copy-agent-info (info agent))))
 
 (defmethod ns-entry-name (agent)
-  (format nil "/agent/~a" (core:agent-info-name (pinfo agent))))
+  (format nil "/agent/~a" (core:agent-info-name (info agent))))
 
 (defmethod set-state (agent state)
   (dbg agent "set-state ~a" state)
-  (setf (core:agent-info-state (pinfo agent)) state)
+  (setf (core:agent-info-state (info agent)) state)
   agent)
 
 (defmethod agent-time (agent)
@@ -245,7 +238,7 @@
         return dev))
 
 (defun set-location (agent location)
-  (setf (core:agent-info-location (pinfo agent)) location)
+  (setf (core:agent-info-location (info agent)) location)
   (dolist (device (devices agent))
     (setf (dev:location device) location)))
 
