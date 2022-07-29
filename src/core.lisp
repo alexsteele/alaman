@@ -100,6 +100,10 @@
 (defun rand-range-incl (min max)
   (rand-range min (+ 1 max)))
 
+(defun rand-point (dims)
+  (list (random (first dims))
+	(random (second dims))))
+
 (defun export-all (pkg)
   (let ((pack (find-package pkg)))
     (do-symbols (sym pack)

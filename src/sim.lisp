@@ -71,7 +71,9 @@
     (assert (>= count 0))
     (loop for name in names
 	  collect (agent:new-rover
-		   :info (make-agent-info :id (new-id) :name name)
+		   :info (make-agent-info :id (new-id)
+					  :name name
+					  :location (core:rand-point (config-dims config)))
 		   :world world
 		   :clock clock
 		   :ns nameserver
