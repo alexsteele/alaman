@@ -9,12 +9,8 @@
 (in-package :alaman.device)
 
 (defclass device ()
-  ((info
-    :initarg :info
-    :accessor info)
-   (location
-    :initarg :location
-    :accessor location)))
+  ((info :initarg :info :accessor info)
+   (location :initarg :location :accessor location)))
 
 (defmethod device-id ((dev device))
   (core:device-info-id (info dev)))
@@ -26,6 +22,9 @@
 (defmethod kind ((dev device))
   (core:device-info-kind (info dev)))
 
+(defmethod mass ((dev device))
+  (core:device-info-mass (info dev)))
+
 (defclass bag (device)
   ((capacity
     :initarg :capacity
@@ -35,7 +34,7 @@
     :accessor bag-items)))
 
 (defun new-bag (&key
-		  (info (core:make-device-info :kind :bag))
+		  (info (core:make-device-info :kind :bag :mass 1))
 		  (capacity 10))
   (make-instance 'bag :info info :capacity capacity))
 
@@ -72,7 +71,7 @@
     :initarg :drain-rate ; per second
     :reader drain-rate)))
 
-(defun new-battery (&key (info (core:make-device-info :kind :battery))
+(defun new-battery (&key (info (core:make-device-info :kind :battery :mass 1))
 		      (capacity 100)
 		      (drain-rate 0.0))
   (make-instance 'battery :info info
@@ -103,7 +102,10 @@
     :initarg :fill-rate
     :reader fill-rate)))
 
-(defun new-solar-panel (&key location world (info (core:make-device-info)) (fill-rate 1.0) (battery nil))
+(defun new-solar-panel (&key location world
+			  (info (core:make-device-info :kind :solar-panel :mass 1))
+			  (fill-rate 1.0)
+			  (battery nil))
   (assert location)
   (assert world)
   (make-instance 'solar-panel :info info
@@ -152,7 +154,7 @@
     :initarg :max-thrust
     :reader max-thrust)))
 
-(defun new-engine (&key battery (info (core:make-device-info :kind :engine))
+(defun new-engine (&key battery (info (core:make-device-info :kind :engine :mass 10))
 		     (max-drain-rate 1.0) (max-thrust 100.0))
   (assert battery)
   (make-instance 'engine :info info
@@ -220,7 +222,7 @@
     :reader spectrum)))
 
 (defun new-radio (&key
-		    (info (core:make-device-info :id (core:new-id) :kind :radio))
+		    (info (core:make-device-info :id (core:new-id) :kind :radio :mass 1))
 		    (spectrum *spectrum*))
   (make-instance 'radio :info info :spectrum spectrum))
 

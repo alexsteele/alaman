@@ -36,8 +36,8 @@
 
 (defstruct agent-info
   "Information about an agent."
-  (id "")
-  (name "")
+  (id nil)
+  (name nil)
   (state nil)
   (tags nil)
   (settings nil)
@@ -55,6 +55,7 @@
   (state nil)
   (tags nil)
   (settings nil)
+  (mass nil)
   (vars nil))
 
 (defstruct (command (:conc-name cmd-))
