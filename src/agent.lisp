@@ -27,6 +27,8 @@
 
 (in-package :alaman.agent)
 
+(defvar *max-agent-speed* 1)
+
 ;; Names ------------------------------------------------------------
 
 (defvar *agent-name-prefixes* '(aerobic magic miserly misfit insolent tall short speedy zippy turvy rotund))
@@ -242,7 +244,9 @@
         return dev))
 
 (defun set-location (agent location)
-  (setf (core:agent-info-location (pinfo agent)) location))
+  (setf (core:agent-info-location (pinfo agent)) location)
+  (dolist (device (devices agent))
+    (setf (dev:location device) location)))
 
 ;; Planning  -------------------------------------------------------------------
 
@@ -309,8 +313,6 @@
     end-time))
 
 ;; ---------- move ----------
-
-(defvar *max-agent-speed* 10)
 
 (defun point-x (loc) (car loc))
 (defun point-y (loc) (car (cdr loc)))

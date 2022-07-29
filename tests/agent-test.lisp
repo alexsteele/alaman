@@ -138,7 +138,9 @@
     (agent:run-step A)
     (is (equalp :done (core:cmd-state move-cmd)))
     (is (equalp '(0 9) (agent:location A)))
+    (is (equalp '(0 9) (dev:location bat)))
+    (is (equalp '(0 9) (dev:location eng)))
 
     (agent:stop A)))
 
-(run! 'agent-tests)
+(debug! 'agent-tests)
