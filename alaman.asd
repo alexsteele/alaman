@@ -5,7 +5,7 @@
   :version "0.1.0"
   :author "Alex Steele"
   :license "MIT"
-  :depends-on (:alexandria :serapeum :uiop :priority-queue :spinneret)
+  :depends-on (:alexandria :serapeum :uiop :priority-queue :spinneret :ltk)
   :pathname "src/"
   :components
   ((:file "admin" :depends-on ("agent" "core" "time" "ns"))
