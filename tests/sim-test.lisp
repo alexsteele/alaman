@@ -31,19 +31,19 @@
     (sim:stop S)))
 
 (test sim-init-args
-  (let* ((spec (sim:make-spec :dims '(10 10)))
+  (let* ((config (sim:make-config :dims '(10 10)))
 	 (clock (new-fixed-clock))
 	 (nameserv (ns:init))
 	 (agents (list (agent:init :info (core:make-agent-info :name "test")
 				   :clock clock
 				   :ns nameserv)))
-	 (S (sim:init spec :agents agents)))
+	 (S (sim:init config :agents agents)))
     (sim:start S)
     (sim:run-step S)
     (sim:stop S)))
 
 (test sim-no-op
-  (let ((S (sim:init (sim:make-spec)))
+  (let ((S (sim:init (sim:make-config)))
 	(C (cmd:no-op)))
     (sim:start S)
     (sim:submit S C)

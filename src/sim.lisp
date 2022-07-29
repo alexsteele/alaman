@@ -14,7 +14,7 @@
    (:world :alaman.world)
    (:time :alaman.time)
    (:sp :spinneret))
-  (:export #:make-spec
+  (:export #:make-config
            #:make-sim
 	   #:init
 	   #:start
@@ -26,8 +26,7 @@
 	   #:load-from))
 (in-package :alaman.sim)
 
-(defstruct spec
-  "Simulation specification."
+(defstruct config
   (name "")
   (folder nil)
   (seed nil)
@@ -39,35 +38,35 @@
 (defstruct sim
   "Simulation state."
   (id nil)
-  (spec nil)
+  (config nil)
   (world nil)
   (clock nil)
   (nameserver nil)
   (admin nil)
   (agents nil))
 
-(defun init (&optional (spec (make-spec))
+(defun init (&optional (config (make-config))
 	     &key (clock (new-system-clock))
 	       (nameserver (ns:init))
-	       (world (create-world spec))
-	       (agents (create-agents spec world clock nameserver))
+	       (world (create-world config))
+	       (agents (create-agents config world clock nameserver))
 	       (admin (admin:init :folder nil :ns nameserver :clock clock)))
   (make-sim
    :id (new-id)
-   :spec spec
+   :config config
    :clock clock
    :nameserver nameserver
    :world world
    :admin admin
    :agents agents))
 
-(defun create-world (spec)
-  (make-world :dims (core:spec-dims spec)
-	      :tiles (world:uniform-map (core:spec-dims spec))))
+(defun create-world (config)
+  (make-world :dims (config-dims config)
+	      :tiles (world:uniform-map (config-dims config))))
 
-(defun create-agents (spec world clock nameserver)
-  (let* ((count (core:rand-range-incl (spec-min-agents spec)
-				      (spec-max-agents spec)))
+(defun create-agents (config world clock nameserver)
+  (let* ((count (core:rand-range-incl (config-min-agents config)
+				      (config-max-agents config)))
 	 (names (agent:make-agent-names count)))
     (assert (>= count 0))
     (loop for name in names
